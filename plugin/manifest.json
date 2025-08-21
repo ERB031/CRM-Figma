@@ -1,0 +1,8 @@
+{
+"name": "JSON Prototype Builder (MVP)",
+"id": "json-prototype-builder-mvp",
+"api": "1.0.0",
+"main": "code.js",
+"ui": "ui.html",
+"editorType": ["figma"]
+}

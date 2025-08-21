@@ -1,0 +1,73 @@
+{
+{ "type": "button", "name": "Go to Wellness", "x": 940, "y": 680, "w": 220, "h": 44, "label": "Go to Wellness Check-In" }
+],
+"hotspots": [
+{ "from": "Go to Wellness", "toFrame": "Wellness", "transition": "smartAnimate" },
+{ "from": "Card A", "toFrame": "Board v2 (66%)", "transition": "instant" }
+]
+},
+{
+"name": "Board v2 (66%)",
+"size": { "w": 1200, "h": 800 },
+"bg": "#FFFFFF",
+"layers": [
+{ "type": "text", "name": "H1", "text": "Project Board", "x": 40, "y": 32, "fontSize": 28, "bold": true },
+{ "type": "rect", "name": "Col: To Do", "x": 40, "y": 110, "w": 360, "h": 560, "fill": "#F7F7F7", "radius": 16 },
+{ "type": "rect", "name": "Col: In Progress", "x": 420, "y": 110, "w": 360, "h": 560, "fill": "#F7F7F7", "radius": 16 },
+{ "type": "rect", "name": "Col: Done", "x": 800, "y": 110, "w": 360, "h": 560, "fill": "#F7F7F7", "radius": 16 },
+{ "type": "rect", "name": "Card A (moved)", "x": 820, "y": 260, "w": 320, "h": 90, "fill": "#FFFFFF", "radius": 12, "stroke": "#E6E6E6" },
+{ "type": "text", "name": "Card A title (moved)", "text": "Set up project board", "x": 840, "y": 288, "fontSize": 16, "bold": true },
+{ "type": "rect", "name": "Card B", "x": 440, "y": 140, "w": 320, "h": 90, "fill": "#FFFFFF", "radius": 12, "stroke": "#E6E6E6" },
+{ "type": "text", "name": "Card B title", "text": "Team kickoff call", "x": 460, "y": 168, "fontSize": 16, "bold": true },
+{ "type": "rect", "name": "Card C", "x": 820, "y": 140, "w": 320, "h": 90, "fill": "#FFFFFF", "radius": 12, "stroke": "#E6E6E6" },
+{ "type": "text", "name": "Card C title", "text": "Wellness survey draft", "x": 840, "y": 168, "fontSize": 16, "bold": true },
+{ "type": "rect", "name": "Progress Track", "x": 40, "y": 700, "w": 880, "h": 10, "fill": "#EEEEEE", "radius": 6 },
+{ "type": "rect", "name": "Progress Fill 66", "x": 40, "y": 700, "w": 580, "h": 10, "fill": "#4F46E5", "radius": 6 },
+{ "type": "button", "name": "Go to Wellness", "x": 940, "y": 680, "w": 220, "h": 44, "label": "Go to Wellness Check-In" }
+],
+"hotspots": [
+{ "from": "Go to Wellness", "toFrame": "Wellness", "transition": "smartAnimate" }
+]
+},
+{
+"name": "Wellness",
+"size": { "w": 1200, "h": 800 },
+"bg": "#FFFFFF",
+"layers": [
+{ "type": "text", "name": "H1", "text": "Wellness Check-In", "x": 40, "y": 32, "fontSize": 28, "bold": true },
+{ "type": "text", "name": "Prompt", "text": "How are you feeling today?", "x": 40, "y": 96, "fontSize": 18 },
+{ "type": "button", "name": "Mood Good", "x": 40, "y": 140, "w": 140, "h": 48, "label": "😀 Good" },
+{ "type": "button", "name": "Mood Okay", "x": 200, "y": 140, "w": 140, "h": 48, "label": "😐 Okay" },
+{ "type": "button", "name": "Mood Bad", "x": 360, "y": 140, "w": 140, "h": 48, "label": "☹️ Bad" },
+{ "type": "rect", "name": "Notes Field", "x": 40, "y": 210, "w": 600, "h": 180, "fill": "#FAFAFA", "radius": 12, "stroke": "#E6E6E6" },
+{ "type": "text", "name": "Notes Placeholder", "text": "Any notes you'd like to share? (optional)", "x": 60, "y": 236, "fontSize": 14, "opacity": 0.5 },
+{ "type": "button", "name": "Submit Check-In", "x": 40, "y": 410, "w": 200, "h": 48, "label": "Submit Check-In" }
+],
+"hotspots": [
+{ "from": "Mood Good", "toFrame": "Dashboard", "transition": "smartAnimate" },
+{ "from": "Mood Okay", "toFrame": "Dashboard", "transition": "smartAnimate" },
+{ "from": "Mood Bad", "toFrame": "Dashboard", "transition": "smartAnimate" },
+{ "from": "Submit Check-In", "toFrame": "Dashboard", "transition": "smartAnimate" }
+]
+},
+{
+"name": "Dashboard",
+"size": { "w": 1200, "h": 800 },
+"bg": "#FFFFFF",
+"layers": [
+{ "type": "text", "name": "H1", "text": "Dashboard", "x": 40, "y": 32, "fontSize": 28, "bold": true },
+{ "type": "rect", "name": "Panel Progress", "x": 40, "y": 100, "w": 520, "h": 220, "fill": "#F7F7F7", "radius": 16 },
+{ "type": "text", "name": "Panel Progress Title", "text": "Team Progress", "x": 60, "y": 120, "fontSize": 16, "bold": true },
+{ "type": "rect", "name": "Progress Track", "x": 60, "y": 160, "w": 460, "h": 10, "fill": "#EEEEEE", "radius": 6 },
+{ "type": "rect", "name": "Progress Fill", "x": 60, "y": 160, "w": 300, "h": 10, "fill": "#4F46E5", "radius": 6 },
+{ "type": "rect", "name": "Panel Wellness", "x": 600, "y": 100, "w": 520, "h": 220, "fill": "#F7F7F7", "radius": 16 },
+{ "type": "text", "name": "Panel Wellness Title", "text": "Team Wellness", "x": 620, "y": 120, "fontSize": 16, "bold": true },
+{ "type": "text", "name": "Avg Mood", "text": "Avg Mood (Placeholder): 3.8 / 5", "x": 620, "y": 160, "fontSize": 14, "opacity": 0.8 },
+{ "type": "button", "name": "Back to Board", "x": 40, "y": 360, "w": 180, "h": 44, "label": "Back to Board" }
+],
+"hotspots": [
+{ "from": "Back to Board", "toFrame": "Board v1 (33%)", "transition": "smartAnimate" }
+]
+}
+]
+}
