@@ -39,6 +39,7 @@
     .grid{display:grid;gap:16px}
     .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
     .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .crm-grid{grid-template-columns:2fr 1fr}
     .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 10px 24px rgba(17,12,34,.06);padding:16px}
     .card h3{margin:0 0 10px 0}
     .btn{background:var(--purple);color:#fff;border:none;border-radius:10px;padding:10px 14px;cursor:pointer}
@@ -69,6 +70,7 @@
     .chart{width:100%;height:180px;background:conic-gradient(from 180deg at 50% 50%, #e9e5f7, #efe8ff);border-radius:12px;border:1px solid var(--border);display:grid;place-items:center}
     .checkbox{width:18px;height:18px;border-radius:6px;border:1px solid var(--border);display:inline-grid;place-items:center}
     .notice{background:#f6f3ff;border:1px solid var(--border);padding:10px;border-radius:10px}
+    .add-task-row{display:flex;gap:6px;margin-top:8px}
     footer{padding:30px 20px;color:var(--muted);text-align:center}
   </style>
 </head>
@@ -111,7 +113,7 @@
 
     <!-- CRM SNAPSHOT -->
     <section id="page-crm" class="page hidden">
-      <div class="grid grid-2">
+      <div class="grid grid-2 crm-grid">
         <div class="card">
           <h3>Clients <span class="pill">Editable</span></h3>
           <table class="table" id="client-table">
@@ -193,32 +195,29 @@
           <div class="kanban">
             <div class="column">
               <h4>To Do</h4>
-              <div class="task" id="task-default">
-                <strong>Launch Onboarding Flow</strong>
-                <div class="subtask"><span class="checkbox">✓</span> Create welcome email draft</div>
-                <div class="subtask"><span class="checkbox"></span> Build onboarding checklist</div>
-                <div class="subtask"><span class="checkbox"></span> QA test with sample client</div>
-                <div class="mini muted">Owner: Nate • Due: Sep 5</div>
+              <div id="todo-list"></div>
+              <div class="add-task-row">
+                <input class="input" id="todo-new-title" placeholder="Task title" style="flex:2" />
+                <input type="date" class="input" id="todo-new-due" style="flex:1" />
+                <button class="btn add-task" data-status="todo">Add</button>
               </div>
             </div>
             <div class="column">
               <h4>In Progress</h4>
-              <div class="task">
-                <strong>Proposal for Blue Sky Studio</strong>
-                <div class="subtask"><span class="checkbox">✓</span> Gather scope & assets</div>
-                <div class="subtask"><span class="checkbox"></span> Draft proposal in Docs</div>
-                <div class="subtask"><span class="checkbox"></span> Send for review</div>
-                <div class="mini muted">Owner: Nate • Due: Aug 28</div>
+              <div id="progress-list"></div>
+              <div class="add-task-row">
+                <input class="input" id="progress-new-title" placeholder="Task title" style="flex:2" />
+                <input type="date" class="input" id="progress-new-due" style="flex:1" />
+                <button class="btn add-task" data-status="progress">Add</button>
               </div>
             </div>
             <div class="column">
               <h4>Done</h4>
-              <div class="task">
-                <strong>Kickoff – Acme Co.</strong>
-                <div class="subtask"><span class="checkbox">✓</span> Schedule meeting</div>
-                <div class="subtask"><span class="checkbox">✓</span> Share agenda</div>
-                <div class="subtask"><span class="checkbox">✓</span> Confirm attendees</div>
-                <div class="mini muted">Owner: Nate • Completed</div>
+              <div id="done-list"></div>
+              <div class="add-task-row">
+                <input class="input" id="done-new-title" placeholder="Task title" style="flex:2" />
+                <input type="date" class="input" id="done-new-due" style="flex:1" />
+                <button class="btn add-task" data-status="done">Add</button>
               </div>
             </div>
           </div>
@@ -294,21 +293,14 @@
 
     <!-- INSIGHTS CHARTS -->
     <section id="page-insights" class="page hidden">
-      <div class="grid grid-3">
+      <div class="grid grid-2">
         <div class="card">
           <h3>Overdue Tasks</h3>
-          <div class="chart">Line trend ↓</div>
-          <div class="kpi"><span class="muted">Last 30 days</span><strong>‑18%</strong></div>
+          <ul id="overdue-list" class="mini"></ul>
         </div>
         <div class="card">
-          <h3>Automation Adoption</h3>
-          <div class="chart">Gauge 68%</div>
-          <div class="kpi"><span class="muted">Users automated</span><strong>68%</strong></div>
-        </div>
-        <div class="card">
-          <h3>Daily Completion Rate</h3>
-          <div class="chart">Bars</div>
-          <div class="kpi"><span class="muted">Avg last week</span><strong>80%</strong></div>
+          <h3>Completed Tasks</h3>
+          <ul id="completed-list" class="mini"></ul>
         </div>
       </div>
     </section>
@@ -426,6 +418,84 @@
         }catch(err){ console.warn('Failed to parse saved CRM data', err); }
       }
     }
+
+    // Project Tasks (Kanban)
+    const taskColumns = {
+      todo: document.getElementById('todo-list'),
+      progress: document.getElementById('progress-list'),
+      done: document.getElementById('done-list')
+    };
+    let tasks = [];
+    function loadTasks(){
+      const saved = localStorage.getItem('kanban-tasks');
+      if(saved){
+        try{ tasks = JSON.parse(saved); }catch(e){ tasks = []; }
+      }
+      if(!tasks.length){
+        tasks = [
+          {id:1,title:'Launch Onboarding Flow',due:'2024-09-05',status:'todo'},
+          {id:2,title:'Proposal for Blue Sky Studio',due:'2024-08-28',status:'progress'},
+          {id:3,title:'Kickoff – Acme Co.',due:'2024-08-20',status:'done'}
+        ];
+      }
+    }
+    function saveTasks(){ localStorage.setItem('kanban-tasks', JSON.stringify(tasks)); }
+    function renderTasks(){
+      Object.values(taskColumns).forEach(col=>col.innerHTML='');
+      tasks.forEach(t=>{
+        const col = taskColumns[t.status];
+        if(!col) return;
+        const div = document.createElement('div');
+        div.className = 'task';
+        div.dataset.id = t.id;
+        div.innerHTML = `<div contenteditable class="task-title">${t.title}</div><div class="mini">Due: <span contenteditable class="task-due">${t.due||''}</span></div>`;
+        col.appendChild(div);
+      });
+      updateInsights();
+    }
+    function addTask(status,title,due){
+      const id = Date.now();
+      tasks.push({id,title,due,status});
+      saveTasks();
+      renderTasks();
+    }
+    document.querySelectorAll('.add-task').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const status = btn.dataset.status;
+        const title = document.getElementById(`${status}-new-title`).value.trim();
+        const due = document.getElementById(`${status}-new-due`).value;
+        if(!title) return;
+        addTask(status,title,due);
+        document.getElementById(`${status}-new-title`).value='';
+        document.getElementById(`${status}-new-due`).value='';
+      });
+    });
+    document.addEventListener('blur', (e)=>{
+      const taskEl = e.target.closest('.task');
+      if(!taskEl) return;
+      const id = Number(taskEl.dataset.id);
+      const task = tasks.find(t=>t.id===id);
+      if(!task) return;
+      task.title = taskEl.querySelector('.task-title').textContent.trim();
+      task.due = taskEl.querySelector('.task-due').textContent.trim();
+      saveTasks();
+      updateInsights();
+    }, true);
+    function updateInsights(){
+      const today = new Date().toISOString().split('T')[0];
+      const overdue = tasks.filter(t=>t.status!=='done' && t.due && t.due<today);
+      const completed = tasks.filter(t=>t.status==='done');
+      const overdueList = document.getElementById('overdue-list');
+      const completedList = document.getElementById('completed-list');
+      if(overdueList){
+        overdueList.innerHTML = overdue.length ? overdue.map(t=>`<li>${t.title} (Due: ${t.due})</li>`).join('') : '<li>None</li>';
+      }
+      if(completedList){
+        completedList.innerHTML = completed.length ? completed.map(t=>`<li>${t.title}</li>`).join('') : '<li>None</li>';
+      }
+    }
+    loadTasks();
+    renderTasks();
 
     // Done for the Day overlay
     const doneBtn = document.getElementById('done-day');
