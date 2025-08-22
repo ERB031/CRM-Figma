@@ -1468,14 +1468,24 @@
         // handle non-2xx HTTP responses
         const text = await response.text();
         console.error('Sim.ai error:', text);
-        return;
+        return `Error ${response.status}: ${text}`;
       }
 
       const data = await response.json();
       console.log('Sim.ai response:', data);
-      return data; // Return response for widget usage
+
+      // Try to extract a useful reply from various possible response shapes
+      if (typeof data === 'string') return data;
+      if (data.output) return data.output;
+      if (data.result) return data.result;
+      if (data.response) return data.response;
+      if (Array.isArray(data.outputs) && data.outputs[0]) {
+        return data.outputs[0].output || data.outputs[0].text || JSON.stringify(data.outputs[0]);
+      }
+      return JSON.stringify(data); // Fallback: return raw JSON
     } catch (error) {
       console.error('Network or parsing error:', error);
+      return `Error: ${error.message}`;
     }
   }
 
@@ -1493,11 +1503,8 @@
         if(!text) return;
         messages.innerHTML += `<div><strong>You:</strong> ${text}</div>`;
         input.value='';
-        const data = await executeSimWorkflow(text);
-        if(data){
-          const reply = typeof data === 'string' ? data : JSON.stringify(data);
-          messages.innerHTML += `<div><strong>Sim.ai:</strong> ${reply}</div>`;
-        }
+        const reply = await executeSimWorkflow(text);
+        messages.innerHTML += `<div><strong>Sim.ai:</strong> ${reply ?? '(no response)'}</div>`;
       });
     }
   });
