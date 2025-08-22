@@ -535,6 +535,19 @@
         col.appendChild(div);
       }
     }
+    // click to advance pipeline stage
+    if(pipelineBoard){
+      pipelineBoard.addEventListener('click',e=>{
+        const card=e.target.closest('.task');
+        if(!card) return;
+        const stages=['Lead','Proposal','Won'];
+        const current=card.parentElement.dataset.stage;
+        let idx=stages.indexOf(current);
+        idx=(idx+1)%stages.length;
+        const nextCol=pipelineBoard.querySelector(`.column[data-stage='${stages[idx]}']`);
+        if(nextCol) nextCol.appendChild(card);
+      });
+    }
 
     // Clients table
     const addClientBtn = document.getElementById('add-client');
@@ -759,20 +772,23 @@
         }
       });
 
-      // Daily tasks
+    // Daily tasks
       const dailyList = document.getElementById('daily-list');
+      const todayStr = new Date().toISOString().split('T')[0];
       let dailyTasks = [];
       function loadDaily(){
         const saved = localStorage.getItem('daily-tasks');
         if(saved){ try{ dailyTasks = JSON.parse(saved); }catch{ dailyTasks=[]; } }
         if(!dailyTasks.length){
           dailyTasks = [
-            {id:1,title:'Call: Jordan Lee (Acme Co.)',due:'2024-09-02',checked:false},
-            {id:2,title:'Call: Priya Shah (Blue Sky Studio)',due:'2024-09-02',checked:false},
-            {id:3,title:'Call: Alex Rivera (Zenith Group)',due:'2024-09-02',checked:false},
-            {id:4,title:'Wellness: Stretch for 5 minutes',due:'',checked:false},
-            {id:5,title:'Wellness: Drink water (250 ml)',due:'',checked:false}
+            {id:1,title:'Call: Jordan Lee (Acme Co.)',due:todayStr,checked:false},
+            {id:2,title:'Call: Priya Shah (Blue Sky Studio)',due:todayStr,checked:false},
+            {id:3,title:'Call: Alex Rivera (Zenith Group)',due:todayStr,checked:false},
+            {id:4,title:'Wellness: Stretch for 5 minutes',due:todayStr,checked:false},
+            {id:5,title:'Wellness: Drink water (250 ml)',due:todayStr,checked:false}
           ];
+        } else {
+          dailyTasks = dailyTasks.map(t=>({...t, due: t.due || todayStr}));
         }
       }
       function saveDaily(){ localStorage.setItem('daily-tasks', JSON.stringify(dailyTasks)); }
@@ -783,20 +799,22 @@
           const div=document.createElement('div');
           div.className='task'+(t.checked?' checked':'');
           div.dataset.id=t.id;
-          div.innerHTML=`<div style="display:flex;align-items:center;gap:6px;"><div class="checkbox ${t.checked?'checked':''}" data-check></div><div contenteditable class="task-title">${t.title}</div></div><div class="mini">Due: <span contenteditable class="task-due">${t.due||''}</span></div>`;
+          div.innerHTML=`<div style="display:flex;align-items:center;gap:6px;"><div class="checkbox ${t.checked?'checked':''}" data-check></div><div contenteditable class="task-title">${t.title}</div></div><div class="mini">Due: <input type="date" class="task-due" value="${t.due||todayStr}" /></div>`;
           dailyList.appendChild(div);
         });
       }
       const addDaily=document.getElementById('daily-add');
+      const dailyDueInput=document.getElementById('daily-new-due');
+      if(dailyDueInput){ dailyDueInput.value=todayStr; }
       if(addDaily){
         addDaily.addEventListener('click',()=>{
           const title=document.getElementById('daily-new-title').value.trim();
-          const due=document.getElementById('daily-new-due').value;
+          const due=dailyDueInput.value||todayStr;
           if(!title) return;
           dailyTasks.push({id:Date.now(),title,due,checked:false});
           saveDaily(); renderDaily();
           document.getElementById('daily-new-title').value='';
-          document.getElementById('daily-new-due').value='';
+          dailyDueInput.value=todayStr;
         });
       }
       loadDaily();
@@ -817,12 +835,13 @@
           updateInsights();
           renderWorkflow();
         }else{
-          const d = dailyTasks.find(t=>t.id===id);
-          if(d){
-            d.title = taskEl.querySelector('.task-title').textContent.trim();
-            d.due = taskEl.querySelector('.task-due')?.textContent.trim() || '';
-            saveDaily();
-          }
+            const d = dailyTasks.find(t=>t.id===id);
+            if(d){
+              d.title = taskEl.querySelector('.task-title').textContent.trim();
+              const dueInput = taskEl.querySelector('.task-due');
+              d.due = dueInput ? dueInput.value : todayStr;
+              saveDaily();
+            }
         }
       }, true);
 
@@ -919,7 +938,8 @@
           const y=h-barH;
           ctx.fillStyle=color;
           ctx.fillRect(x,y,bw,barH);
-          barData[id].push({x,y,w:bw,h:barH,label:labels[i],value:v});
+          const displayVal = id==='workflow-chart'? v*20 : v;
+          barData[id].push({x,y,w:bw,h:barH,label:labels[i],value:displayVal});
         });
         if(!ctx.canvas.dataset.tooltipAttached){
           ctx.canvas.addEventListener('mousemove',e=>{
@@ -928,7 +948,9 @@
             const bar=barData[id].find(b=>x>=b.x && x<=b.x+b.w && y>=b.y && y<=b.y+b.h);
             if(bar){
               tooltip.style.display='block';
-              tooltip.textContent=`${bar.label}: ${bar.value} tasks`;
+              tooltip.textContent = id==='workflow-chart'
+                ? `${bar.label}: ${bar.value}% complete`
+                : `${bar.label}: ${bar.value} tasks`;
               tooltip.style.left=(e.clientX+10)+'px';
               tooltip.style.top=(e.clientY+10)+'px';
             }else{ tooltip.style.display='none'; }
@@ -1006,15 +1028,17 @@
       });
     }
     const addUpcoming=document.getElementById('add-upcoming');
+    const upcomingDateInput=document.getElementById('upcoming-date');
+    if(upcomingDateInput){ upcomingDateInput.value=new Date().toISOString().slice(0,16); }
     if(addUpcoming){
       addUpcoming.addEventListener('click',()=>{
         const title=document.getElementById('upcoming-title').value.trim();
-        const date=document.getElementById('upcoming-date').value;
+        const date=upcomingDateInput.value||new Date().toISOString().slice(0,16);
         if(!title) return;
         upcoming.push({title,time:date});
         saveUpcoming(); renderUpcoming();
         document.getElementById('upcoming-title').value='';
-        document.getElementById('upcoming-date').value='';
+        upcomingDateInput.value=new Date().toISOString().slice(0,16);
       });
     }
     if(upcomingList){
@@ -1046,7 +1070,8 @@
       // Mental health chart
       const moodLine = document.getElementById('mood-line');
       const moodDots = document.getElementById('mood-dots');
-      let moodData = [2,3,4,3,5,4,3];
+      // sample data for past 7 days (1-5 scale)
+      let moodData = [3,4,2,5,4,3,4];
       function renderMood(){
         const base=160;
         moodDots.innerHTML='';
