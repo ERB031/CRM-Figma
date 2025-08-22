@@ -345,7 +345,7 @@
       </div>
       <div class="card" style="margin-top:16px;text-align:center">
         <button class="btn" id="start-survey">🌱 Employee Wellness Survey</button>
-        <p class="mini" style="margin-top:8px"><a href="https://www.youtube.com/watch?v=qs1AxaQTLyE" target="_blank" rel="noopener">Try this office stretch</a></p>
+        <p class="mini" style="margin-top:8px"><a href="https://www.youtube.com/watch?v=EBxV9YDEtAk" target="_blank" rel="noopener">Try this office stretch</a></p>
       </div>
     </section>
 
@@ -784,8 +784,8 @@
             {id:1,title:'Call: Jordan Lee (Acme Co.)',due:todayStr,checked:false},
             {id:2,title:'Call: Priya Shah (Blue Sky Studio)',due:todayStr,checked:false},
             {id:3,title:'Call: Alex Rivera (Zenith Group)',due:todayStr,checked:false},
-            {id:4,title:'Wellness: Stretch for 5 minutes',due:todayStr,checked:false},
-            {id:5,title:'Wellness: Drink water (250 ml)',due:todayStr,checked:false}
+            {id:4,title:'Wellness: Stretch for 5 minutes',due:todayStr,checked:false,link:'https://www.healthline.com/health/deskercise'},
+            {id:5,title:'Wellness: Drink water (250 ml)',due:todayStr,checked:false,link:'https://www.cdc.gov/healthyweight/healthy_eating/water-and-health.htm'}
           ];
         } else {
           dailyTasks = dailyTasks.map(t=>({...t, due: t.due || todayStr}));
@@ -799,7 +799,8 @@
           const div=document.createElement('div');
           div.className='task'+(t.checked?' checked':'');
           div.dataset.id=t.id;
-          div.innerHTML=`<div style="display:flex;align-items:center;gap:6px;"><div class="checkbox ${t.checked?'checked':''}" data-check></div><div contenteditable class="task-title">${t.title}</div></div><div class="mini">Due: <input type="date" class="task-due" value="${t.due||todayStr}" /></div>`;
+          const linkHTML = t.link ? `<div class="mini"><a href="${t.link}" target="_blank">Learn more</a></div>` : '';
+          div.innerHTML=`<div style="display:flex;align-items:center;gap:6px;"><div class="checkbox ${t.checked?'checked':''}" data-check></div><div contenteditable class="task-title">${t.title}</div></div><div class="mini">Due: <input type="date" class="task-due" value="${t.due||todayStr}" /></div>${linkHTML}`;
           dailyList.appendChild(div);
         });
       }
@@ -912,6 +913,8 @@
       const tooltip = document.createElement('div');
       tooltip.id='chart-tooltip';
       document.body.appendChild(tooltip);
+      // Seed mental health data so charts have values on load
+      let moodData = [3,4,2,5,4,3,4];
       function renderCharts(){
         const overdueCtx = document.getElementById('overdue-chart')?.getContext('2d');
         const completedCtx = document.getElementById('completed-chart')?.getContext('2d');
@@ -934,7 +937,8 @@
         barData[id]=[];
         data.forEach((v,i)=>{
           const x=(i*2+1)*bw;
-          const barH=v*20;
+          const mult = id==='workload-chart'?10:20;
+          const barH=v*mult;
           const y=h-barH;
           ctx.fillStyle=color;
           ctx.fillRect(x,y,bw,barH);
@@ -963,8 +967,8 @@
       function renderWorkflow(){
         const ctx = document.getElementById('workflow-chart')?.getContext('2d');
         if(!ctx) return;
-        const labels = tasks.map(t=>t.title);
-        const data = tasks.map(t=> t.status==='done'?5 : t.status==='progress'?2.5 : 0);
+        const labels = ['Research','Design','Development','Testing','Launch'];
+        const data = [1,2,3,4,5];
         drawBars(ctx, data, '#6366f1', labels);
       }
     loadTasks();
@@ -1035,7 +1039,7 @@
         const title=document.getElementById('upcoming-title').value.trim();
         const date=upcomingDateInput.value||new Date().toISOString().slice(0,16);
         if(!title) return;
-        upcoming.push({title,time:date});
+        upcoming.unshift({title,time:date});
         saveUpcoming(); renderUpcoming();
         document.getElementById('upcoming-title').value='';
         upcomingDateInput.value=new Date().toISOString().slice(0,16);
@@ -1071,7 +1075,6 @@
       const moodLine = document.getElementById('mood-line');
       const moodDots = document.getElementById('mood-dots');
       // sample data for past 7 days (1-5 scale)
-      let moodData = [3,4,2,5,4,3,4];
       function renderMood(){
         const base=160;
         moodDots.innerHTML='';
@@ -1260,7 +1263,7 @@
       }
       if(modalClose){ modalClose.addEventListener('click', saveTaskModal); }
     function openTaskDetails(taskEl){
-      let title='', due='', source='', id='';
+      let title='', due='', source='', id='', article='';
       if(taskEl.dataset.id){
         const t = tasks.find(x=>x.id===Number(taskEl.dataset.id));
         if(t){ title=t.title; due=t.due||''; source='kanban'; id=t.id; }
@@ -1270,7 +1273,7 @@
         title = u.title; due = u.time; source='upcoming'; id=idx;
       }else if(taskEl.closest('#page-daily')){
         const d = dailyTasks.find(x=>x.id===Number(taskEl.dataset.id));
-        if(d){ title=d.title; due=d.due||''; source='daily'; id=d.id; }
+        if(d){ title=d.title; due=d.due||''; source='daily'; id=d.id; article=d.link; }
       }else if(taskEl.closest('#pipeline')){
         title = taskEl.textContent.trim();
         due = taskEl.parentElement.dataset.stage || '';
@@ -1281,11 +1284,14 @@
         modalDue.value = due ? (due.includes('T')?due:due+'T00:00') : '';
         modalNote.value = taskNotes[title] || '';
         const contact = findCRMContactFromTitle(title);
+        let html='';
         if(contact){
-          modalContact.innerHTML = `<a href="#page-crm" class="crm-link" data-target="${contact.id}">View contact: ${contact.name}</a>`;
-        }else{
-          modalContact.textContent='';
+          html += `<a href="#page-crm" class="crm-link" data-target="${contact.id}">View contact: ${contact.name}</a>`;
         }
+        if(article){
+          html += `${html?'<br/>':''}<a href="${article}" target="_blank">Wellness article</a>`;
+        }
+        modalContact.innerHTML = html;
         taskModal.dataset.key = title;
         taskModal.dataset.source = source;
         taskModal.dataset.id = id;
