@@ -1,33 +1,70 @@
+const corsHeaders = {
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS'
+};
+
 export async function handler(event) {
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 204, headers: corsHeaders, body: '' };
+  }
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return {
+      statusCode: 405,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: 'Method Not Allowed' })
+    };
   }
   try {
     const { input } = JSON.parse(event.body || '{}');
     if (!input || typeof input !== 'string') {
-      return { statusCode: 400, body: 'Missing input (string)' };
+      return {
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify({ error: 'Missing input (string)' })
+      };
     }
 
     const simToken = process.env.SIM_API_TOKEN;
     if (!simToken) {
-      return { statusCode: 500, body: 'SIM_API_TOKEN not configured' };
+      return {
+        statusCode: 500,
+        headers: corsHeaders,
+        body: JSON.stringify({ error: 'SIM_API_TOKEN not configured' })
+      };
     }
 
-    const res = await fetch('https://www.sim.ai/api/workflows/25142af3-518e-4882-8d5d-f198a1e5e6ea/execute', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': simToken
-      },
-      body: JSON.stringify({ message: input })
-    });
+    const res = await fetch(
+      'https://www.sim.ai/api/workflows/25142af3-518e-4882-8d5d-f198a1e5e6ea/execute',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': simToken
+        },
+        body: JSON.stringify({ message: input })
+      }
+    );
 
-    const data = await res.json().catch(() => ({}));
+    const txt = await res.text();
+    let body;
+    try {
+      body = JSON.parse(txt);
+    } catch {
+      body = { raw: txt };
+    }
+
     return {
       statusCode: res.status,
-      body: JSON.stringify(data)
+      headers: corsHeaders,
+      body: JSON.stringify(body)
     };
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: err.message })
+    };
   }
 }
