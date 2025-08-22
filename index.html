@@ -1443,8 +1443,9 @@
   </script>
 
 <script>
+const PROXY_URL = '/.netlify/functions/run-crm-assistant';
 async function sendCRM(message) {
-  const res = await fetch('/.netlify/functions/run-crm-assistant', {
+  const res = await fetch(PROXY_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ input: message })
@@ -1467,6 +1468,12 @@ async function sendCRM(message) {
 }
 // Example usage:
 // sendCRM("Create a task for client 123: demo on 2025-09-01 17:00Z").then(console.log);
+// Or test directly:
+// fetch(PROXY_URL, {
+//   method: 'POST',
+//   headers: { 'Content-Type': 'application/json' },
+//   body: JSON.stringify({ input: "I'm kinda tired" })
+// }).then(r => r.text()).then(console.log).catch(console.error);
 </script>
 
 <!-- Sim.ai chat widget -->
