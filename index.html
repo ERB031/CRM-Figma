@@ -275,6 +275,9 @@
           <p class="mini muted">This is a visual demo; logging won’t persist beyond this session.</p>
         </div>
       </div>
+      <div class="card" style="margin-top:16px;text-align:center">
+        <button class="btn" id="start-survey">🌱 Employee Wellness Survey</button>
+      </div>
     </section>
 
     <!-- INSIGHTS CHARTS -->
@@ -296,7 +299,7 @@
     </section>
 
     <!-- CALENDAR -->
-    <section id="page-calendar" class="page hidden">
+      <section id="page-calendar" class="page hidden">
       <div class="grid grid-2">
         <div class="card">
           <h3>Calendar</h3>
@@ -314,10 +317,26 @@
           </div>
         </div>
       </div>
-    </section>
+      </section>
 
-    <!-- TASK DETAIL MODAL -->
-    <section id="task-modal" class="hidden" aria-hidden="true">
+      <!-- WELLNESS SURVEY MODAL -->
+      <section id="survey-modal" class="hidden" aria-hidden="true">
+        <div style="position:fixed;inset:0;background:rgba(31,26,51,.66);display:grid;place-items:center;z-index:1000">
+          <div class="card" style="max-width:480px">
+            <h3 id="survey-title">🌱 Employee Mental Wellness & Productivity Survey</h3>
+            <p id="survey-question"></p>
+            <div id="survey-options" style="margin:8px 0"></div>
+            <div id="survey-feedback" class="mini" style="min-height:40px"></div>
+            <div class="linkrow" style="margin-top:12px;justify-content:flex-end">
+              <button class="btn secondary" id="survey-next">Next</button>
+              <button class="btn link" id="survey-close">Close</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TASK DETAIL MODAL -->
+      <section id="task-modal" class="hidden" aria-hidden="true">
       <div style="position:fixed;inset:0;background:rgba(31,26,51,.66);display:grid;place-items:center;z-index:1000">
         <div class="card" style="max-width:360px;text-align:center">
           <h3 id="modal-title"></h3>
@@ -785,17 +804,131 @@
       }
       renderMood();
       const logMoodBtn = document.getElementById('log-mood');
-      if(logMoodBtn){
-        logMoodBtn.addEventListener('click',()=>{
-          const val=Number(document.getElementById('mood-today').value);
-          moodData.push(val);
-          if(moodData.length>7) moodData.shift();
-          renderMood();
-        });
-      }
+        if(logMoodBtn){
+          logMoodBtn.addEventListener('click',()=>{
+            const val=Number(document.getElementById('mood-today').value);
+            moodData.push(val);
+            if(moodData.length>7) moodData.shift();
+            renderMood();
+          });
+        }
 
-      // Task detail modal
-      const taskModal = document.getElementById('task-modal');
+        // Wellness survey
+        const surveyBtn = document.getElementById('start-survey');
+        const surveyModal = document.getElementById('survey-modal');
+        const surveyTitle = document.getElementById('survey-title');
+        const surveyQuestion = document.getElementById('survey-question');
+        const surveyOptions = document.getElementById('survey-options');
+        const surveyFeedback = document.getElementById('survey-feedback');
+        const surveyNext = document.getElementById('survey-next');
+        const surveyClose = document.getElementById('survey-close');
+        const POSITIVE_MSG = 'Great! Keep working hard.';
+        const surveyQs = [
+          { q:'In the past two weeks, how often have you felt overwhelmed by your workload?', options:[
+            {text:'Rarely or never', positive:true},
+            {text:'Sometimes', positive:true},
+            {text:'Often', positive:false, msg:'👉 Reminder: It’s okay to feel stretched sometimes, but chronic stress can harm your health. Try breaking tasks into smaller steps, delegating where possible, and scheduling brief recharge breaks. Your well-being matters more than perfection.'},
+            {text:'Almost always', positive:false, msg:'👉 Reminder: It’s okay to feel stretched sometimes, but chronic stress can harm your health. Try breaking tasks into smaller steps, delegating where possible, and scheduling brief recharge breaks. Your well-being matters more than perfection.'}
+          ]},
+          { q:'Do you generally feel rested and energized at the start of your workday?', options:[
+            {text:'Yes, consistently', positive:true},
+            {text:'Sometimes', positive:true},
+            {text:'Rarely', positive:false, msg:'👉 Sleep and rest are essential to clear thinking and productivity. Aim for consistent bedtime routines and short daily rituals (stretching, journaling, breathing) to signal rest. Even small improvements can add up to big gains in energy.'}
+          ]},
+          { q:'How easy is it for you to concentrate on important tasks?', options:[
+            {text:'Easy', positive:true},
+            {text:'Somewhat difficult', positive:false, msg:'👉 Focus can be trained. Try using short focus intervals (like 25 minutes on, 5 minutes off), silencing notifications, and tackling your hardest task first. Your brain works best in sprints, not marathons.'},
+            {text:'Very difficult', positive:false, msg:'👉 Focus can be trained. Try using short focus intervals (like 25 minutes on, 5 minutes off), silencing notifications, and tackling your hardest task first. Your brain works best in sprints, not marathons.'}
+          ]},
+          { q:'Do you feel you can prioritize your work without constant rework or interruption?', options:[
+            {text:'Yes', positive:true},
+            {text:'Sometimes', positive:false, msg:'👉 When priorities shift too often, it helps to clarify what matters most. Aligning with your manager or team on the “top 3” priorities can reduce stress. Remember—focus on impact, not endless busyness.'},
+            {text:'No', positive:false, msg:'👉 When priorities shift too often, it helps to clarify what matters most. Aligning with your manager or team on the “top 3” priorities can reduce stress. Remember—focus on impact, not endless busyness.'}
+          ]},
+          { q:'Do you feel you can disconnect from work after hours?', options:[
+            {text:'Yes, easily', positive:true},
+            {text:'Sometimes', positive:true},
+            {text:'Rarely', positive:false, msg:'👉 Healthy boundaries are vital. Try creating a “shutdown ritual” at day’s end—write tomorrow’s to-do list, close your laptop, and step away. Protecting personal time strengthens both mental health and workplace performance.'}
+          ]},
+          { q:'Do you feel motivated and inspired to do your best work most days?', options:[
+            {text:'Yes', positive:true},
+            {text:'Sometimes', positive:false, msg:'👉 Motivation often grows when work feels meaningful. Reflect on how your role supports others, and celebrate small wins each day. Even small steps forward count as real progress.'},
+            {text:'No', positive:false, msg:'👉 Motivation often grows when work feels meaningful. Reflect on how your role supports others, and celebrate small wins each day. Even small steps forward count as real progress.'}
+          ]},
+          { q:'Do you feel your contributions are recognized and valued?', options:[
+            {text:'Yes', positive:true},
+            {text:'Sometimes', positive:false, msg:'👉 You deserve to be seen. If recognition feels lacking, share your progress with teammates or keep a “done list” to celebrate yourself. Recognition starts inside, but don’t hesitate to voice your wins.'},
+            {text:'No', positive:false, msg:'👉 You deserve to be seen. If recognition feels lacking, share your progress with teammates or keep a “done list” to celebrate yourself. Recognition starts inside, but don’t hesitate to voice your wins.'}
+          ]},
+          { q:'Do you feel comfortable asking for help when work feels overwhelming?', options:[
+            {text:'Yes', positive:true},
+            {text:'Sometimes', positive:false, msg:'👉 Reaching out shows strength, not weakness. Whether it’s a manager, coworker, or wellness resource, support networks exist to help lighten your load. You’re not meant to carry everything alone.'},
+            {text:'No', positive:false, msg:'👉 Reaching out shows strength, not weakness. Whether it’s a manager, coworker, or wellness resource, support networks exist to help lighten your load. You’re not meant to carry everything alone.'}
+          ]},
+          { q:'In the past month, have stress or mental health challenges caused you to miss work or work while unwell?', options:[
+            {text:'No', positive:true},
+            {text:'Occasionally', positive:false, msg:'👉 Your health is the foundation of your work. Taking time to rest and recover is not a failure—it’s an investment. Prioritize care when needed, and you’ll return stronger and clearer.'},
+            {text:'Frequently', positive:false, msg:'👉 Your health is the foundation of your work. Taking time to rest and recover is not a failure—it’s an investment. Prioritize care when needed, and you’ll return stronger and clearer.'}
+          ]},
+          { q:'How would you rate your overall mental well-being right now?', options:[
+            {text:'Good', positive:true},
+            {text:'Fair', positive:false, msg:'👉 Remember: well-being is a journey, not a destination. Small habits like daily movement, connecting with a friend, or practicing gratitude can shift your mindset over time. Progress, not perfection, is the goal.'},
+            {text:'Poor', positive:false, msg:'👉 Remember: well-being is a journey, not a destination. Small habits like daily movement, connecting with a friend, or practicing gratitude can shift your mindset over time. Progress, not perfection, is the goal.'}
+          ]}
+        ];
+        let surveyIndex=0;
+        function renderSurvey(){
+          const q=surveyQs[surveyIndex];
+          surveyTitle.textContent = `Question ${surveyIndex+1} of ${surveyQs.length}`;
+          surveyQuestion.textContent = q.q;
+          surveyOptions.innerHTML='';
+          q.options.forEach((opt,i)=>{
+            const label=document.createElement('label');
+            label.style.display='block';
+            label.style.margin='6px 0';
+            const input=document.createElement('input');
+            input.type='radio'; input.name='survey-opt'; input.value=i;
+            label.appendChild(input);
+            label.append(' '+opt.text);
+            surveyOptions.appendChild(label);
+          });
+          surveyFeedback.textContent='';
+          surveyNext.textContent = surveyIndex < surveyQs.length-1 ? 'Next' : 'Finish';
+          surveyNext.disabled=true;
+        }
+        function handleSelection(){
+          const sel=document.querySelector('input[name="survey-opt"]:checked');
+          if(!sel){ surveyNext.disabled=true; return; }
+          const opt=surveyQs[surveyIndex].options[Number(sel.value)];
+          surveyFeedback.textContent = opt.positive ? POSITIVE_MSG : opt.msg;
+          surveyNext.disabled=false;
+        }
+        function nextSurvey(){
+          const sel=document.querySelector('input[name="survey-opt"]:checked');
+          if(!sel) return;
+          surveyIndex++;
+          if(surveyIndex<surveyQs.length){
+            renderSurvey();
+          }else{
+            surveyModal.classList.add('hidden');
+          }
+        }
+        if(surveyBtn){
+          surveyBtn.addEventListener('click',()=>{
+            surveyIndex=0;
+            renderSurvey();
+            surveyModal.classList.remove('hidden');
+          });
+        }
+        if(surveyOptions){ surveyOptions.addEventListener('change',handleSelection); }
+        if(surveyNext){ surveyNext.addEventListener('click',nextSurvey); }
+        if(surveyClose){ surveyClose.addEventListener('click',()=>surveyModal.classList.add('hidden')); }
+        if(surveyModal){
+          surveyModal.addEventListener('click',e=>{ if(e.target===surveyModal.firstElementChild){ surveyModal.classList.add('hidden'); } });
+        }
+
+        // Task detail modal
+        const taskModal = document.getElementById('task-modal');
       const modalTitle = document.getElementById('modal-title');
       const modalDue = document.getElementById('modal-due');
       const modalNote = document.getElementById('modal-note');
