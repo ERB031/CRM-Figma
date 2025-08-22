@@ -52,13 +52,13 @@
     .table td:first-child{border-radius:10px 0 0 10px}
     .table td:last-child{border-radius:0 10px 10px 0}
     .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--border);background:var(--purple-100);color:var(--purple-600)}
-    .kanban{display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:12px}
-    .column{background:var(--bg-alt);border:1px dashed var(--border);border-radius:12px;padding:10px;min-width:260px}
+    .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;overflow-x:auto}
+    .column{background:var(--bg-alt);border:1px dashed var(--border);border-radius:12px;padding:10px;min-width:300px}
     .column h4{margin:0 0 8px 0}
     .task{background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:8px}
     .subtask{display:flex;align-items:center;gap:8px;margin:6px 0}
     .assistant{background:linear-gradient(180deg,#efe8ff,#fff);border:1px solid var(--border);border-radius:14px;padding:12px}
-    .prompt{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;margin:8px 0}
+    .prompt{display:block;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;margin:8px 0}
     .prompt:hover{background:var(--purple-100)}
     .kpi{display:flex;align-items:center;justify-content:space-between}
     .mini{font-size:12px;color:var(--muted)}
@@ -126,24 +126,24 @@
               <tr><th>Name</th><th>Company</th><th>Email</th><th>Phone</th><th>Stage</th><th>Owner</th></tr>
             </thead>
             <tbody>
-              <tr>
-                <td contenteditable>Alex Rivera</td>
+              <tr id="crm-alex" data-address="123 Peachtree Rd, Atlanta, GA" data-notes="">
+                <td contenteditable class="client-name">Alex Rivera</td>
                 <td contenteditable>Zenith Group</td>
                 <td contenteditable>alex@zenithgrp.com</td>
                 <td contenteditable>(404) 555‑0101</td>
                 <td contenteditable data-stage>Lead</td>
                 <td contenteditable>Nate</td>
               </tr>
-              <tr>
-                <td contenteditable>Priya Shah</td>
+              <tr id="crm-priya" data-address="500 Midtown Ave, Atlanta, GA" data-notes="">
+                <td contenteditable class="client-name">Priya Shah</td>
                 <td contenteditable>Blue Sky Studio</td>
                 <td contenteditable>priya@blueskystudio.io</td>
                 <td contenteditable>(470) 555‑0199</td>
                 <td contenteditable data-stage>Proposal</td>
                 <td contenteditable>Nate</td>
               </tr>
-              <tr id="crm-acme">
-                <td contenteditable>Jordan Lee</td>
+              <tr id="crm-acme" data-address="42 Industrial Way, Atlanta, GA" data-notes="">
+                <td contenteditable class="client-name">Jordan Lee</td>
                 <td contenteditable>Acme Co.</td>
                 <td contenteditable>jordan@acmeco.com</td>
                 <td contenteditable>(678) 555‑0147</td>
@@ -229,11 +229,11 @@
         </div>
         <div class="card assistant">
           <h3>AI Assistant (Prompts)</h3>
-          <div class="prompt">“Prioritize my tasks for today based on due dates and client impact.”</div>
-          <div class="prompt">“Draft a follow‑up email to <em>Priya Shah at Blue Sky Studio</em> about the proposal.”</div>
-          <div class="prompt">“Summarize yesterday’s activity for <em>Jordan Lee (Acme Co.)</em> and suggest next steps.”</div>
-          <div class="prompt">“Generate 3 wellness nudges for a busy day with back‑to‑back calls.”</div>
-          <div class="prompt">“Create a checklist to launch the onboarding flow this week.”</div>
+          <a class="prompt" target="_blank">“Prioritize my tasks for today based on due dates and client impact.”</a>
+          <a class="prompt" target="_blank">“Draft a follow‑up email to <em>Priya Shah at Blue Sky Studio</em> about the proposal.”</a>
+          <a class="prompt" target="_blank">“Summarize yesterday’s activity for <em>Jordan Lee (Acme Co.)</em> and suggest next steps.”</a>
+          <a class="prompt" target="_blank">“Generate 3 wellness nudges for a busy day with back‑to‑back calls.”</a>
+          <a class="prompt" target="_blank">“Create a checklist to launch the onboarding flow this week.”</a>
           <div class="notice mini">Non‑functional demo: prompts are static for prototype purposes.</div>
           <div class="linkrow" style="margin-top:8px">
             <button class="btn" data-nav="#page-crm">View CRM</button>
@@ -248,54 +248,20 @@
       <div class="grid grid-2">
         <div class="card">
           <h3>Today’s Top Tasks</h3>
-          <div class="task">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <div class="checkbox"></div>
-              <div contenteditable class="task-title">Call: Jordan Lee (Acme Co.)</div>
-            </div>
-            <div class="mini"><a href="#page-crm" class="crm-link" data-target="crm-acme">Open in CRM</a> • (678) 555‑0147</div>
-          </div>
-          <div class="task">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <div class="checkbox"></div>
-              <div contenteditable class="task-title">Call: Priya Shah (Blue Sky Studio)</div>
-            </div>
-            <div class="mini">(470) 555‑0199</div>
-          </div>
-          <div class="task">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <div class="checkbox"></div>
-              <div contenteditable class="task-title">Call: Alex Rivera (Zenith Group)</div>
-            </div>
-            <div class="mini">(404) 555‑0101</div>
-          </div>
-          <div class="task">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <div class="checkbox"></div>
-              <div contenteditable class="task-title">Wellness: Stretch for 5 minutes</div>
-            </div>
-            <div class="mini muted">Nudge repeats every 90 minutes</div>
-          </div>
-          <div class="task">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <div class="checkbox"></div>
-              <div contenteditable class="task-title">Wellness: Drink water (250 ml)</div>
-            </div>
-            <div class="mini muted">Track 8 servings daily</div>
+          <div id="daily-list"></div>
+          <div class="add-task-row">
+            <input class="input" id="daily-new-title" placeholder="New task" style="flex:1" />
+            <button class="btn" id="daily-add">Add</button>
           </div>
           <button class="btn" id="done-day">Mark Done for the Day</button>
         </div>
         <div class="card">
           <h3>Mental Health Trend</h3>
           <div class="mini muted">Self‑reported 1–5 scale • Past 7 days</div>
-          <svg viewBox="0 0 320 180" class="chart" aria-label="Mental health chart">
-            <polyline points="10,140 55,120 100,100 145,110 190,90 235,80 280,70" fill="none" stroke="#6b46c1" stroke-width="3" />
-            <g fill="#6b46c1">
-              <circle cx="10" cy="140" r="4"/><circle cx="55" cy="120" r="4"/><circle cx="100" cy="100" r="4"/>
-              <circle cx="145" cy="110" r="4"/><circle cx="190" cy="90" r="4"/><circle cx="235" cy="80" r="4"/>
-              <circle cx="280" cy="70" r="4"/>
-            </g>
-          </svg>
+            <svg viewBox="0 0 320 180" class="chart" id="mood-chart" aria-label="Mental health chart">
+              <polyline id="mood-line" fill="none" stroke="#6b46c1" stroke-width="3"></polyline>
+              <g id="mood-dots" fill="#6b46c1"></g>
+            </svg>
           <div class="grid" style="margin-top:10px">
             <select id="mood-today" class="input">
               <option value="5">Today’s mood: 5 (Great)</option>
@@ -317,13 +283,13 @@
         <div class="card">
           <h3>Overdue Tasks</h3>
           <div id="overdue-count" class="mini" style="color:var(--danger);margin-bottom:8px"></div>
-          <div class="chart"></div>
+          <canvas id="overdue-chart" width="320" height="180" class="chart"></canvas>
           <ul id="overdue-list" class="mini"></ul>
         </div>
         <div class="card">
           <h3>Completed Tasks</h3>
           <div id="completed-count" class="mini" style="color:var(--success);margin-bottom:8px"></div>
-          <div class="chart"></div>
+          <canvas id="completed-chart" width="320" height="180" class="chart"></canvas>
           <ul id="completed-list" class="mini"></ul>
         </div>
       </div>
@@ -356,7 +322,29 @@
         <div class="card" style="max-width:360px;text-align:center">
           <h3 id="modal-title"></h3>
           <p class="mini">Due: <span id="modal-due"></span></p>
+          <textarea id="modal-note" class="input" placeholder="Add notes" style="margin:8px 0"></textarea>
+          <div id="modal-contact" class="mini" style="margin-bottom:8px"></div>
           <button class="btn secondary" id="modal-close">Close</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLIENT DETAIL MODAL -->
+    <section id="client-modal" class="hidden" aria-hidden="true">
+      <div style="position:fixed;inset:0;background:rgba(31,26,51,.66);display:grid;place-items:center;z-index:1000">
+        <div class="card" style="max-width:400px">
+          <h3 id="client-name"></h3>
+          <p class="mini" id="client-company"></p>
+          <p class="mini" id="client-email"></p>
+          <p class="mini" id="client-phone"></p>
+          <p class="mini">Stage: <span id="client-stage"></span> • Owner: <span id="client-owner"></span></p>
+          <p class="mini">Address:</p>
+          <div id="client-address" contenteditable class="input" style="margin-bottom:6px"></div>
+          <p class="mini"><a id="client-map" href="#" target="_blank">View on map</a></p>
+          <textarea id="client-notes" class="input" placeholder="Notes" style="margin-top:6px"></textarea>
+          <div class="linkrow" style="margin-top:10px;justify-content:center">
+            <button class="btn secondary" id="client-close">Close</button>
+          </div>
         </div>
       </div>
     </section>
@@ -446,26 +434,66 @@
         });
       });
     }
-    if(saveBtn){
-      saveBtn.addEventListener('click', ()=>{
-        const data = serializeCRM();
-        localStorage.setItem('crm-demo', JSON.stringify(data));
-        alert('Saved locally for demo.');
-      });
-      // Load on init if present
-      const saved = localStorage.getItem('crm-demo');
-      if(saved){
-        try{
-          const rows = JSON.parse(saved);
-          table.innerHTML='';
-          rows.forEach(cols=>{
-            const tr=document.createElement('tr');
-            tr.innerHTML = cols.map((v,i)=>`<td contenteditable ${i===4? 'data-stage':''}>${v}</td>`).join('');
-            table.appendChild(tr);
-          })
-        }catch(err){ console.warn('Failed to parse saved CRM data', err); }
+      if(saveBtn){
+        saveBtn.addEventListener('click', ()=>{
+          const data = serializeCRM();
+          localStorage.setItem('crm-demo', JSON.stringify(data));
+          alert('Saved locally for demo.');
+        });
+        // Load on init if present
+        const saved = localStorage.getItem('crm-demo');
+        if(saved){
+          try{
+            const rows = JSON.parse(saved);
+            table.innerHTML='';
+            rows.forEach(cols=>{
+              const tr=document.createElement('tr');
+              tr.innerHTML = cols.map((v,i)=>`<td contenteditable ${i===4? 'data-stage':''}>${v}</td>`).join('');
+              table.appendChild(tr);
+            })
+          }catch(err){ console.warn('Failed to parse saved CRM data', err); }
+        }
       }
-    }
+
+      // CRM detail modal
+      const clientModal = document.getElementById('client-modal');
+      const clientClose = document.getElementById('client-close');
+      const clientNameEl = document.getElementById('client-name');
+      const clientCompany = document.getElementById('client-company');
+      const clientEmail = document.getElementById('client-email');
+      const clientPhone = document.getElementById('client-phone');
+      const clientStage = document.getElementById('client-stage');
+      const clientOwner = document.getElementById('client-owner');
+      const clientAddress = document.getElementById('client-address');
+      const clientNotes = document.getElementById('client-notes');
+      const clientMap = document.getElementById('client-map');
+      let currentClientRow = null;
+      table.addEventListener('click', e=>{
+        const nameCell = e.target.closest('.client-name');
+        if(!nameCell) return;
+        currentClientRow = nameCell.parentElement;
+        const cells = currentClientRow.children;
+        clientNameEl.textContent = cells[0].textContent.trim();
+        clientCompany.textContent = cells[1].textContent.trim();
+        clientEmail.textContent = cells[2].textContent.trim();
+        clientPhone.textContent = cells[3].textContent.trim();
+        clientStage.textContent = cells[4].textContent.trim();
+        clientOwner.textContent = cells[5].textContent.trim();
+        clientAddress.textContent = currentClientRow.dataset.address || '';
+        clientNotes.value = currentClientRow.dataset.notes || '';
+        clientMap.href = 'https://www.google.com/maps?q='+encodeURIComponent(clientAddress.textContent.trim());
+        clientModal.classList.remove('hidden');
+      });
+      clientAddress.addEventListener('blur',()=>{
+        clientMap.href = 'https://www.google.com/maps?q='+encodeURIComponent(clientAddress.textContent.trim());
+      });
+      function saveClientDetails(){
+        if(!currentClientRow) return;
+        currentClientRow.dataset.address = clientAddress.textContent.trim();
+        currentClientRow.dataset.notes = clientNotes.value.trim();
+      }
+      if(clientClose){ clientClose.addEventListener('click',()=>{ saveClientDetails(); clientModal.classList.add('hidden'); }); }
+      if(clientModal){ clientModal.addEventListener('click', e=>{ if(e.target===clientModal.firstElementChild){ saveClientDetails(); clientModal.classList.add('hidden'); } }); }
 
     // Project Tasks (Kanban)
     const taskColumns = {
@@ -509,62 +537,143 @@
       saveTasks();
       renderTasks();
     }
-    document.querySelectorAll('.add-task').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const status = btn.dataset.status;
-        const title = document.getElementById(`${status}-new-title`).value.trim();
-        const due = document.getElementById(`${status}-new-due`).value;
-        if(!title) return;
-        addTask(status,title,due);
-        document.getElementById(`${status}-new-title`).value='';
-        document.getElementById(`${status}-new-due`).value='';
+      document.querySelectorAll('.add-task').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const status = btn.dataset.status;
+          const title = document.getElementById(`${status}-new-title`).value.trim();
+          const due = document.getElementById(`${status}-new-due`).value;
+          if(!title) return;
+          addTask(status,title,due);
+          document.getElementById(`${status}-new-title`).value='';
+          document.getElementById(`${status}-new-due`).value='';
+        });
       });
-    });
-    document.addEventListener('blur', (e)=>{
-      const taskEl = e.target.closest('.task');
-      if(!taskEl) return;
-      const id = Number(taskEl.dataset.id);
-      const task = tasks.find(t=>t.id===id);
-      if(!task) return;
-      task.title = taskEl.querySelector('.task-title').textContent.trim();
-      task.due = taskEl.querySelector('.task-due').textContent.trim();
-      saveTasks();
-      updateInsights();
-    }, true);
-    document.addEventListener('click', (e)=>{
-      const box = e.target.closest('.checkbox');
-      if(!box) return;
-      const taskEl = box.closest('.task');
-      const id = Number(taskEl.dataset.id);
-      const task = tasks.find(t=>t.id===id);
-      if(task){
-        task.checked = !task.checked;
-        box.classList.toggle('checked', task.checked);
-        taskEl.classList.toggle('checked', task.checked);
-        saveTasks();
-        updateInsights();
-      }else{
-        const isChecked = box.classList.toggle('checked');
-        taskEl.classList.toggle('checked', isChecked);
+
+      // Daily tasks
+      const dailyList = document.getElementById('daily-list');
+      let dailyTasks = [];
+      function loadDaily(){
+        const saved = localStorage.getItem('daily-tasks');
+        if(saved){ try{ dailyTasks = JSON.parse(saved); }catch{ dailyTasks=[]; } }
+        if(!dailyTasks.length){
+          dailyTasks = [
+            {id:1,title:'Call: Jordan Lee (Acme Co.)',checked:false},
+            {id:2,title:'Call: Priya Shah (Blue Sky Studio)',checked:false},
+            {id:3,title:'Call: Alex Rivera (Zenith Group)',checked:false},
+            {id:4,title:'Wellness: Stretch for 5 minutes',checked:false},
+            {id:5,title:'Wellness: Drink water (250 ml)',checked:false}
+          ];
+        }
       }
-    });
-    function updateInsights(){
-      const today = new Date().toISOString().split('T')[0];
-      const overdue = tasks.filter(t=>!t.checked && t.due && t.due<today);
-      const completed = tasks.filter(t=>t.checked);
-      const overdueList = document.getElementById('overdue-list');
-      const completedList = document.getElementById('completed-list');
-      const overdueCount = document.getElementById('overdue-count');
-      const completedCount = document.getElementById('completed-count');
-      if(overdueCount){ overdueCount.textContent = `${overdue.length} overdue`; }
-      if(completedCount){ completedCount.textContent = `${completed.length} completed`; }
-      if(overdueList){
-        overdueList.innerHTML = overdue.length ? overdue.map(t=>`<li>${t.title} (Due: ${t.due})</li>`).join('') : '<li>None</li>';
+      function saveDaily(){ localStorage.setItem('daily-tasks', JSON.stringify(dailyTasks)); }
+      function renderDaily(){
+        if(!dailyList) return;
+        dailyList.innerHTML='';
+        dailyTasks.forEach(t=>{
+          const div=document.createElement('div');
+          div.className='task'+(t.checked?' checked':'');
+          div.dataset.id=t.id;
+          div.innerHTML=`<div style="display:flex;align-items:center;gap:6px;"><div class="checkbox ${t.checked?'checked':''}" data-check></div><div contenteditable class="task-title">${t.title}</div></div>`;
+          dailyList.appendChild(div);
+        });
       }
-      if(completedList){
-        completedList.innerHTML = completed.length ? completed.map(t=>`<li>${t.title}</li>`).join('') : '<li>None</li>';
+      const addDaily=document.getElementById('daily-add');
+      if(addDaily){
+        addDaily.addEventListener('click',()=>{
+          const title=document.getElementById('daily-new-title').value.trim();
+          if(!title) return;
+          dailyTasks.push({id:Date.now(),title,checked:false});
+          saveDaily(); renderDaily();
+          document.getElementById('daily-new-title').value='';
+        });
       }
-    }
+      loadDaily();
+      renderDaily();
+
+      // Task notes storage
+      let taskNotes = {};
+      const savedNotes = localStorage.getItem('task-notes');
+      if(savedNotes){ try{ taskNotes = JSON.parse(savedNotes); }catch{ taskNotes = {}; } }
+      document.addEventListener('blur', (e)=>{
+        const taskEl = e.target.closest('.task');
+        if(!taskEl) return;
+        const id = Number(taskEl.dataset.id);
+        const task = tasks.find(t=>t.id===id);
+        if(task){
+          task.title = taskEl.querySelector('.task-title').textContent.trim();
+          task.due = taskEl.querySelector('.task-due').textContent.trim();
+          saveTasks();
+          updateInsights();
+        }else{
+          const d = dailyTasks.find(t=>t.id===id);
+          if(d){ d.title = taskEl.querySelector('.task-title').textContent.trim(); saveDaily(); }
+        }
+      }, true);
+      document.addEventListener('click', (e)=>{
+        const box = e.target.closest('.checkbox');
+        if(!box) return;
+        const taskEl = box.closest('.task');
+        const id = Number(taskEl.dataset.id);
+        const task = tasks.find(t=>t.id===id);
+        if(task){
+          task.checked = !task.checked;
+          box.classList.toggle('checked', task.checked);
+          taskEl.classList.toggle('checked', task.checked);
+          saveTasks();
+          updateInsights();
+        }else{
+          const d = dailyTasks.find(t=>t.id===id);
+          if(d){
+            d.checked = !d.checked;
+            box.classList.toggle('checked', d.checked);
+            taskEl.classList.toggle('checked', d.checked);
+            saveDaily();
+          }else{
+            const isChecked = box.classList.toggle('checked');
+            taskEl.classList.toggle('checked', isChecked);
+          }
+        }
+      });
+      function updateInsights(){
+        const today = new Date().toISOString().split('T')[0];
+        const overdue = tasks.filter(t=>!t.checked && t.due && t.due<today);
+        const completed = tasks.filter(t=>t.checked);
+        const overdueList = document.getElementById('overdue-list');
+        const completedList = document.getElementById('completed-list');
+        const overdueCount = document.getElementById('overdue-count');
+        const completedCount = document.getElementById('completed-count');
+        if(overdueCount){ overdueCount.textContent = `${overdue.length} overdue`; }
+        if(completedCount){ completedCount.textContent = `${completed.length} completed`; }
+        if(overdueList){
+          overdueList.innerHTML = overdue.length ? overdue.map(t=>`<li>${t.title} (Due: ${t.due})</li>`).join('') : '<li>None</li>';
+        }
+        if(completedList){
+          completedList.innerHTML = completed.length ? completed.map(t=>`<li>${t.title}</li>`).join('') : '<li>None</li>';
+        }
+        renderCharts();
+      }
+
+      function renderCharts(){
+        const overdueCtx = document.getElementById('overdue-chart')?.getContext('2d');
+        const completedCtx = document.getElementById('completed-chart')?.getContext('2d');
+        if(overdueCtx){
+          drawBars(overdueCtx, [3,5,2,4,6], '#ef4444');
+        }
+        if(completedCtx){
+          drawBars(completedCtx, [1,3,5,4,7], '#16a34a');
+        }
+      }
+      function drawBars(ctx,data,color){
+        const w=ctx.canvas.width, h=ctx.canvas.height;
+        ctx.clearRect(0,0,w,h);
+        const bw=w/(data.length*2);
+        data.forEach((v,i)=>{
+          const x=(i*2+1)*bw;
+          const y=h-v*20;
+          ctx.fillStyle=color;
+          ctx.fillRect(x,y,bw,v*20);
+        });
+      }
     loadTasks();
     renderTasks();
 
@@ -654,51 +763,100 @@
         saveUpcoming();
       },true);
     }
-    loadUpcoming(); renderUpcoming();
+      loadUpcoming(); renderUpcoming();
 
-    // Task detail modal
-    const taskModal = document.getElementById('task-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalDue = document.getElementById('modal-due');
-    const modalClose = document.getElementById('modal-close');
-    if(taskModal){
-      taskModal.addEventListener('click', e=>{
-        if(e.target===taskModal.firstElementChild){ taskModal.classList.add('hidden'); }
-      });
-    }
-    if(modalClose){ modalClose.addEventListener('click',()=> taskModal.classList.add('hidden')); }
+      // Mental health chart
+      const moodLine = document.getElementById('mood-line');
+      const moodDots = document.getElementById('mood-dots');
+      let moodData = [2,3,4,3,5,4,3];
+      function renderMood(){
+        const base=160;
+        moodDots.innerHTML='';
+        const pts=[];
+        moodData.forEach((v,i)=>{
+          const x=10+i*45;
+          const y=base - v*20;
+          pts.push(`${x},${y}`);
+          const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+          c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',4);
+          moodDots.appendChild(c);
+        });
+        moodLine.setAttribute('points', pts.join(' '));
+      }
+      renderMood();
+      const logMoodBtn = document.getElementById('log-mood');
+      if(logMoodBtn){
+        logMoodBtn.addEventListener('click',()=>{
+          const val=Number(document.getElementById('mood-today').value);
+          moodData.push(val);
+          if(moodData.length>7) moodData.shift();
+          renderMood();
+        });
+      }
+
+      // Task detail modal
+      const taskModal = document.getElementById('task-modal');
+      const modalTitle = document.getElementById('modal-title');
+      const modalDue = document.getElementById('modal-due');
+      const modalNote = document.getElementById('modal-note');
+      const modalContact = document.getElementById('modal-contact');
+      const modalClose = document.getElementById('modal-close');
+      function findCRMContactFromTitle(title){
+        const match = title.match(/(?:Call|Email):\s*([^()]+)/i);
+        if(match){
+          const name = match[1].trim().toLowerCase();
+          const row = [...table.querySelectorAll('tr')].find(r=>r.children[0].textContent.trim().toLowerCase()===name);
+          if(row){ return {name: row.children[0].textContent.trim(), id: row.id}; }
+        }
+        return null;
+      }
+      if(taskModal){
+        taskModal.addEventListener('click', e=>{
+          if(e.target===taskModal.firstElementChild){
+            const key = taskModal.dataset.key;
+            if(key){ taskNotes[key]=modalNote.value.trim(); localStorage.setItem('task-notes', JSON.stringify(taskNotes)); }
+            taskModal.classList.add('hidden');
+          }
+        });
+      }
+      if(modalClose){ modalClose.addEventListener('click',()=>{ const key = taskModal.dataset.key; if(key){ taskNotes[key]=modalNote.value.trim(); localStorage.setItem('task-notes', JSON.stringify(taskNotes)); } taskModal.classList.add('hidden'); }); }
     document.addEventListener('click', e=>{
       if(e.target.closest('.checkbox')||e.target.closest('.remove-upcoming')||e.target.hasAttribute('contenteditable')||e.target.closest('[contenteditable]')||e.target.tagName==='A') return;
       const taskEl = e.target.closest('.task');
       if(!taskEl || taskEl.closest('#task-modal')) return;
       let title='', due='';
-      if(taskEl.dataset.id){
-        const t = tasks.find(x=>x.id===Number(taskEl.dataset.id));
-        if(t){ title=t.title; due=t.due||''; }
-      }else if(taskEl.closest('#upcoming-list')){
-        title = taskEl.querySelector('.task-title').textContent.trim();
-        due = taskEl.querySelector('.mini').textContent.trim();
-      }else if(taskEl.closest('#page-daily')){
-        title = taskEl.querySelector('.task-title')?taskEl.querySelector('.task-title').textContent.trim():taskEl.textContent.trim();
-        due = taskEl.querySelector('.mini')?taskEl.querySelector('.mini').textContent.trim():'';
-      }else if(taskEl.closest('#pipeline')){
-        title = taskEl.textContent.trim();
-        due = taskEl.parentElement.dataset.stage || '';
-      }
-      if(title){
-        modalTitle.textContent=title;
-        modalDue.textContent=due;
-        taskModal.classList.remove('hidden');
-      }
-    });
-
-    document.querySelectorAll('.prompt').forEach(p=>{
-      p.style.cursor='pointer';
-      p.addEventListener('click',()=>{
-        const txt = p.textContent.replace(/[“”]/g,'').trim();
-        window.open('https://chat.openai.com/?q='+encodeURIComponent(txt),'_blank');
+        if(taskEl.dataset.id){
+          const t = tasks.find(x=>x.id===Number(taskEl.dataset.id));
+          if(t){ title=t.title; due=t.due||''; }
+        }else if(taskEl.closest('#upcoming-list')){
+          title = taskEl.querySelector('.task-title').textContent.trim();
+          due = taskEl.querySelector('.mini').textContent.trim();
+        }else if(taskEl.closest('#page-daily')){
+          title = taskEl.querySelector('.task-title')?taskEl.querySelector('.task-title').textContent.trim():taskEl.textContent.trim();
+          due = '';
+        }else if(taskEl.closest('#pipeline')){
+          title = taskEl.textContent.trim();
+          due = taskEl.parentElement.dataset.stage || '';
+        }
+        if(title){
+          modalTitle.textContent=title;
+          modalDue.textContent=due;
+          modalNote.value = taskNotes[title] || '';
+          const contact = findCRMContactFromTitle(title);
+          if(contact){
+            modalContact.innerHTML = `<a href="#page-crm" class="crm-link" data-target="${contact.id}">View contact: ${contact.name}</a>`;
+          }else{
+            modalContact.textContent='';
+          }
+          taskModal.dataset.key = title;
+          taskModal.classList.remove('hidden');
+        }
       });
-    });
+
+      document.querySelectorAll('.prompt').forEach(p=>{
+        const txt = p.textContent.replace(/[“”]/g,'').trim();
+        p.href = 'https://chat.openai.com/?q='+encodeURIComponent(txt);
+      });
 
     // Done for the Day overlay
     const doneBtn = document.getElementById('done-day');
