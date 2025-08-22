@@ -81,6 +81,49 @@
     .add-task-row{display:flex;gap:6px;margin-top:8px}
     #chart-tooltip{position:fixed;pointer-events:none;background:#fff;border:1px solid var(--border);padding:4px 8px;border-radius:6px;font-size:12px;box-shadow:0 2px 4px rgba(17,12,34,.08);display:none}
     footer{padding:30px 20px;color:var(--muted);text-align:center}
+    /* Sim.ai chat widget styles */
+    #sim-widget{
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      width:300px;
+      max-height:400px;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:12px;
+      box-shadow:0 4px 12px rgba(0,0,0,.1);
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      font-size:14px;
+    }
+    #sim-widget-header{
+      background:var(--purple);
+      color:#fff;
+      padding:8px 10px;
+      font-weight:600;
+    }
+    #sim-widget-messages{
+      flex:1;
+      padding:8px;
+      overflow-y:auto;
+    }
+    #sim-widget-input{
+      display:flex;
+      border-top:1px solid var(--border);
+    }
+    #sim-widget-input input{
+      flex:1;
+      border:none;
+      padding:8px;
+    }
+    #sim-widget-input button{
+      border:none;
+      background:var(--purple);
+      color:#fff;
+      padding:8px 12px;
+      cursor:pointer;
+    }
   </style>
 </head>
 <body>
@@ -1398,9 +1441,8 @@
     if(doneBtn){ doneBtn.addEventListener('click', ()=> overlay.classList.remove('hidden')); }
     if(closeDone){ closeDone.addEventListener('click', ()=> overlay.classList.add('hidden')); }
   </script>
-  …
-  <!-- existing HTML and scripts for your Kanban board -->
-<!-- Sim.ai workflow call -->
+
+<!-- Sim.ai workflow and chat widget -->
 <script>
   /**
    * Executes the Sim.ai workflow with a given user message.
@@ -1431,21 +1473,45 @@
 
       const data = await response.json();
       console.log('Sim.ai response:', data);
-      // TODO: update your UI with the returned data
+      return data; // Return response for widget usage
     } catch (error) {
       console.error('Network or parsing error:', error);
     }
   }
 
-  // Example usage: send a test message on page load
+  // Example usage: send a test message on page load and set up widget
   window.addEventListener('DOMContentLoaded', () => {
     executeSimWorkflow('Hello from my CRM app');
+
+    const form = document.getElementById('sim-widget-input');
+    const input = document.getElementById('sim-widget-text');
+    const messages = document.getElementById('sim-widget-messages');
+    if(form && input && messages){
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if(!text) return;
+        messages.innerHTML += `<div><strong>You:</strong> ${text}</div>`;
+        input.value='';
+        const data = await executeSimWorkflow(text);
+        if(data){
+          const reply = typeof data === 'string' ? data : JSON.stringify(data);
+          messages.innerHTML += `<div><strong>Sim.ai:</strong> ${reply}</div>`;
+        }
+      });
+    }
   });
 </script>
 
-  </script>
-</body>
-</html>
+<!-- Sim.ai chat widget -->
+<div id="sim-widget" aria-label="Sim.ai chat widget">
+  <div id="sim-widget-header">Sim.ai</div>
+  <div id="sim-widget-messages"></div>
+  <form id="sim-widget-input">
+    <input type="text" id="sim-widget-text" placeholder="Type a message" />
+    <button type="submit">Send</button>
+  </form>
+</div>
 
 </body>
 </html>
