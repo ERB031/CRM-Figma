@@ -59,6 +59,7 @@
     .subtask{display:flex;align-items:center;gap:8px;margin:6px 0}
     .assistant{background:linear-gradient(180deg,#efe8ff,#fff);border:1px solid var(--border);border-radius:14px;padding:12px}
     .prompt{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;margin:8px 0}
+    .prompt:hover{background:var(--purple-100)}
     .kpi{display:flex;align-items:center;justify-content:space-between}
     .mini{font-size:12px;color:var(--muted)}
     .cta-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
@@ -71,6 +72,7 @@
     .checkbox{width:18px;height:18px;border-radius:6px;border:1px solid var(--border);display:inline-grid;place-items:center;cursor:pointer}
     .checkbox.checked{background:var(--purple);color:#fff}
     .checkbox.checked::before{content:'✓'}
+    .task.checked .task-title{text-decoration:line-through;color:var(--muted)}
     .notice{background:#f6f3ff;border:1px solid var(--border);padding:10px;border-radius:10px}
     .add-task-row{display:flex;gap:6px;margin-top:8px}
     footer{padding:30px 20px;color:var(--muted);text-align:center}
@@ -174,17 +176,17 @@
       <div class="card" style="margin-top:16px">
         <h3>Pipeline <span class="badge">Lead → Proposal → Won</span></h3>
         <div class="grid grid-3" id="pipeline">
-          <div class="column">
+          <div class="column" data-stage="Lead">
             <h4>Lead</h4>
-            <div class="task">Alex Rivera – Zenith Group</div>
+            <div class="task" draggable="true">Alex Rivera – Zenith Group</div>
           </div>
-          <div class="column">
+          <div class="column" data-stage="Proposal">
             <h4>Proposal</h4>
-            <div class="task">Priya Shah – Blue Sky Studio</div>
+            <div class="task" draggable="true">Priya Shah – Blue Sky Studio</div>
           </div>
-          <div class="column">
+          <div class="column" data-stage="Won">
             <h4>Won</h4>
-            <div class="task">Jordan Lee – Acme Co.</div>
+            <div class="task" draggable="true">Jordan Lee – Acme Co.</div>
           </div>
         </div>
       </div>
@@ -196,7 +198,7 @@
         <div class="card">
           <h3>Project Tasks (Kanban)</h3>
           <div class="kanban">
-            <div class="column">
+            <div class="column" data-status="todo">
               <h4>To Do</h4>
               <div id="todo-list"></div>
               <div class="add-task-row">
@@ -205,7 +207,7 @@
                 <button class="btn add-task" data-status="todo">Add</button>
               </div>
             </div>
-            <div class="column">
+            <div class="column" data-status="progress">
               <h4>In Progress</h4>
               <div id="progress-list"></div>
               <div class="add-task-row">
@@ -214,7 +216,7 @@
                 <button class="btn add-task" data-status="progress">Add</button>
               </div>
             </div>
-            <div class="column">
+            <div class="column" data-status="done">
               <h4>Done</h4>
               <div id="done-list"></div>
               <div class="add-task-row">
@@ -247,23 +249,38 @@
         <div class="card">
           <h3>Today’s Top Tasks</h3>
           <div class="task">
-            <strong>Call: Jordan Lee (Acme Co.)</strong>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="checkbox"></div>
+              <div contenteditable class="task-title">Call: Jordan Lee (Acme Co.)</div>
+            </div>
             <div class="mini"><a href="#page-crm" class="crm-link" data-target="crm-acme">Open in CRM</a> • (678) 555‑0147</div>
           </div>
           <div class="task">
-            <strong>Call: Priya Shah (Blue Sky Studio)</strong>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="checkbox"></div>
+              <div contenteditable class="task-title">Call: Priya Shah (Blue Sky Studio)</div>
+            </div>
             <div class="mini">(470) 555‑0199</div>
           </div>
           <div class="task">
-            <strong>Call: Alex Rivera (Zenith Group)</strong>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="checkbox"></div>
+              <div contenteditable class="task-title">Call: Alex Rivera (Zenith Group)</div>
+            </div>
             <div class="mini">(404) 555‑0101</div>
           </div>
           <div class="task">
-            <strong>Wellness: Stretch for 5 minutes</strong>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="checkbox"></div>
+              <div contenteditable class="task-title">Wellness: Stretch for 5 minutes</div>
+            </div>
             <div class="mini muted">Nudge repeats every 90 minutes</div>
           </div>
           <div class="task">
-            <strong>Wellness: Drink water (250 ml)</strong>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="checkbox"></div>
+              <div contenteditable class="task-title">Wellness: Drink water (250 ml)</div>
+            </div>
             <div class="mini muted">Track 8 servings daily</div>
           </div>
           <button class="btn" id="done-day">Mark Done for the Day</button>
@@ -323,9 +340,23 @@
         </div>
         <div class="card">
           <h3>Upcoming (Demo)</h3>
-          <div class="task"><strong>Client Call – Acme Co.</strong><div class="mini">Sep 2, 10:00–10:30</div></div>
-          <div class="task"><strong>Proposal Review – Blue Sky</strong><div class="mini">Sep 3, 14:00–14:30</div></div>
-          <div class="task"><strong>Onboarding Session</strong><div class="mini">Sep 5, 09:00–09:45</div></div>
+          <div id="upcoming-list"></div>
+          <div class="add-task-row">
+            <input class="input" id="upcoming-title" placeholder="Event title" style="flex:2" />
+            <input type="datetime-local" class="input" id="upcoming-date" style="flex:1" />
+            <button class="btn" id="add-upcoming">Add</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TASK DETAIL MODAL -->
+    <section id="task-modal" class="hidden" aria-hidden="true">
+      <div style="position:fixed;inset:0;background:rgba(31,26,51,.66);display:grid;place-items:center;z-index:1000">
+        <div class="card" style="max-width:360px;text-align:center">
+          <h3 id="modal-title"></h3>
+          <p class="mini">Due: <span id="modal-due"></span></p>
+          <button class="btn secondary" id="modal-close">Close</button>
         </div>
       </div>
     </section>
@@ -464,8 +495,9 @@
         const col = taskColumns[t.status];
         if(!col) return;
         const div = document.createElement('div');
-        div.className = 'task';
+        div.className = 'task'+(t.checked?' checked':'');
         div.dataset.id = t.id;
+        div.draggable = true;
         div.innerHTML = `<div style="display:flex;align-items:center;gap:6px;"><div class="checkbox ${t.checked?'checked':''}" data-check></div><div contenteditable class="task-title">${t.title}</div></div><div class="mini">Due: <span contenteditable class="task-due">${t.due||''}</span></div>`;
         col.appendChild(div);
       });
@@ -505,11 +537,16 @@
       const taskEl = box.closest('.task');
       const id = Number(taskEl.dataset.id);
       const task = tasks.find(t=>t.id===id);
-      if(!task) return;
-      task.checked = !task.checked;
-      box.classList.toggle('checked', task.checked);
-      saveTasks();
-      updateInsights();
+      if(task){
+        task.checked = !task.checked;
+        box.classList.toggle('checked', task.checked);
+        taskEl.classList.toggle('checked', task.checked);
+        saveTasks();
+        updateInsights();
+      }else{
+        const isChecked = box.classList.toggle('checked');
+        taskEl.classList.toggle('checked', isChecked);
+      }
     });
     function updateInsights(){
       const today = new Date().toISOString().split('T')[0];
@@ -530,6 +567,130 @@
     }
     loadTasks();
     renderTasks();
+
+    // Kanban drag and drop
+    let draggedTaskId = null;
+    let draggedPerson = null;
+    document.addEventListener('dragstart', e=>{
+      const taskEl = e.target.closest('.task');
+      if(taskEl && taskEl.dataset.id){ draggedTaskId = Number(taskEl.dataset.id); }
+      if(taskEl && taskEl.closest('#pipeline')){ draggedPerson = taskEl; }
+    });
+    document.querySelectorAll('.kanban .column').forEach(col=>{
+      col.addEventListener('dragover', e=>e.preventDefault());
+      col.addEventListener('drop', e=>{
+        e.preventDefault();
+        if(draggedTaskId!==null){
+          const newStatus = col.dataset.status;
+          const task = tasks.find(t=>t.id===draggedTaskId);
+          if(task && newStatus){ task.status = newStatus; saveTasks(); renderTasks(); }
+        }
+      });
+    });
+
+    // Pipeline drag and drop
+    document.querySelectorAll('#pipeline .task').forEach(t=>{
+      t.addEventListener('dragstart', ()=> draggedPerson = t);
+    });
+    document.querySelectorAll('#pipeline .column').forEach(col=>{
+      col.addEventListener('dragover', e=>e.preventDefault());
+      col.addEventListener('drop', ()=>{
+        if(draggedPerson){ col.appendChild(draggedPerson); draggedPerson=null; }
+      });
+    });
+
+    // Calendar upcoming items
+    const upcomingList = document.getElementById('upcoming-list');
+    let upcoming = [];
+    function loadUpcoming(){
+      const saved = localStorage.getItem('calendar-upcoming');
+      if(saved){ try{ upcoming = JSON.parse(saved); }catch{ upcoming=[]; } }
+      if(!upcoming.length){
+        upcoming = [
+          {title:'Client Call – Acme Co.', time:'Sep 2, 10:00'},
+          {title:'Proposal Review – Blue Sky', time:'Sep 3, 14:00'},
+          {title:'Onboarding Session', time:'Sep 5, 09:00'}
+        ];
+      }
+    }
+    function saveUpcoming(){ localStorage.setItem('calendar-upcoming', JSON.stringify(upcoming)); }
+    function renderUpcoming(){
+      if(!upcomingList) return;
+      upcomingList.innerHTML='';
+      upcoming.forEach((u,i)=>{
+        const div=document.createElement('div');
+        div.className='task';
+        div.dataset.index=i;
+        div.innerHTML=`<div contenteditable class="task-title">${u.title}</div><div class="mini" contenteditable>${u.time}</div><button class="btn link remove-upcoming">Remove</button>`;
+        upcomingList.appendChild(div);
+      });
+    }
+    const addUpcoming=document.getElementById('add-upcoming');
+    if(addUpcoming){
+      addUpcoming.addEventListener('click',()=>{
+        const title=document.getElementById('upcoming-title').value.trim();
+        const date=document.getElementById('upcoming-date').value;
+        if(!title) return;
+        const time=date? new Date(date).toLocaleString():'';
+        upcoming.push({title,time});
+        saveUpcoming(); renderUpcoming();
+        document.getElementById('upcoming-title').value='';
+        document.getElementById('upcoming-date').value='';
+      });
+    }
+    if(upcomingList){
+      upcomingList.addEventListener('click',e=>{
+        if(e.target.closest('.remove-upcoming')){
+          const idx=Number(e.target.closest('.task').dataset.index);
+          upcoming.splice(idx,1); saveUpcoming(); renderUpcoming();
+        }
+      });
+      upcomingList.addEventListener('blur',e=>{
+        const item=e.target.closest('.task');
+        if(!item) return;
+        const idx=Number(item.dataset.index);
+        upcoming[idx].title=item.querySelector('.task-title').textContent.trim();
+        upcoming[idx].time=item.querySelector('.mini').textContent.trim();
+        saveUpcoming();
+      },true);
+    }
+    loadUpcoming(); renderUpcoming();
+
+    // Task detail modal
+    const taskModal = document.getElementById('task-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDue = document.getElementById('modal-due');
+    const modalClose = document.getElementById('modal-close');
+    if(taskModal){
+      taskModal.addEventListener('click', e=>{
+        if(e.target===taskModal.firstElementChild){ taskModal.classList.add('hidden'); }
+      });
+    }
+    if(modalClose){ modalClose.addEventListener('click',()=> taskModal.classList.add('hidden')); }
+    document.addEventListener('click', e=>{
+      if(e.target.closest('.checkbox')||e.target.closest('.remove-upcoming')||e.target.hasAttribute('contenteditable')||e.target.closest('[contenteditable]')||e.target.tagName==='A') return;
+      const taskEl = e.target.closest('.task');
+      if(!taskEl || taskEl.closest('#task-modal')) return;
+      let title='', due='';
+      if(taskEl.dataset.id){
+        const t = tasks.find(x=>x.id===Number(taskEl.dataset.id));
+        if(t){ title=t.title; due=t.due||''; }
+      }else if(taskEl.closest('#upcoming-list')){
+        title = taskEl.querySelector('.task-title').textContent.trim();
+        due = taskEl.querySelector('.mini').textContent.trim();
+      }else if(taskEl.closest('#page-daily')){
+        title = taskEl.querySelector('.task-title')?taskEl.querySelector('.task-title').textContent.trim():taskEl.textContent.trim();
+        due = taskEl.querySelector('.mini')?taskEl.querySelector('.mini').textContent.trim():'';
+      }else if(taskEl.closest('#pipeline')){
+        title = taskEl.textContent.trim();
+        due = taskEl.parentElement.dataset.stage || '';
+      }
+      if(title){
+        modalTitle.textContent=title;
+        modalDue.textContent=due;
+        taskModal.classList.remove('hidden');
+      }
+    });
 
     document.querySelectorAll('.prompt').forEach(p=>{
       p.style.cursor='pointer';
