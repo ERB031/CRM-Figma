@@ -117,60 +117,111 @@
 
     <!-- CRM SNAPSHOT -->
     <section id="page-crm" class="page hidden">
-      <div class="grid grid-2 crm-grid">
-        <div class="card">
-          <h3>Clients <span class="pill">Editable</span></h3>
-          <input class="input" id="client-search" placeholder="Search clients" style="margin-bottom:8px" />
-          <table class="table" id="client-table">
-            <thead>
-              <tr><th>Name</th><th>Company</th><th>Email</th><th>Phone</th><th>Stage</th><th>Owner</th></tr>
-            </thead>
-            <tbody>
-              <tr id="crm-alex" data-address="123 Peachtree Rd, Atlanta, GA" data-notes="">
-                <td contenteditable class="client-name">Alex Rivera</td>
-                <td contenteditable>Zenith Group</td>
-                <td contenteditable>alex@zenithgrp.com</td>
-                <td contenteditable>(404) 555‑0101</td>
-                <td contenteditable data-stage>Lead</td>
-                <td contenteditable>Nate</td>
-              </tr>
-              <tr id="crm-priya" data-address="500 Midtown Ave, Atlanta, GA" data-notes="">
-                <td contenteditable class="client-name">Priya Shah</td>
-                <td contenteditable>Blue Sky Studio</td>
-                <td contenteditable>priya@blueskystudio.io</td>
-                <td contenteditable>(470) 555‑0199</td>
-                <td contenteditable data-stage>Proposal</td>
-                <td contenteditable>Nate</td>
-              </tr>
-              <tr id="crm-acme" data-address="42 Industrial Way, Atlanta, GA" data-notes="">
-                <td contenteditable class="client-name">Jordan Lee</td>
-                <td contenteditable>Acme Co.</td>
-                <td contenteditable>jordan@acmeco.com</td>
-                <td contenteditable>(678) 555‑0147</td>
-                <td contenteditable data-stage>Won</td>
-                <td contenteditable>Nate</td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="linkrow" id="crm-tabs" style="margin-bottom:12px">
+        <button class="btn crm-tab active" data-target="crm-clients">Clients</button>
+        <button class="btn crm-tab" data-target="crm-companies">Companies</button>
+      </div>
+      <div id="crm-clients">
+        <div class="grid grid-2 crm-grid">
+          <div class="card">
+            <h3>Clients <span class="pill">Editable</span></h3>
+            <input class="input" id="client-search" placeholder="Search clients" style="margin-bottom:8px" />
+            <table class="table" id="client-table">
+              <thead>
+                <tr><th>Name</th><th>Company</th><th>Email</th><th>Phone</th><th>Stage</th><th>Owner</th></tr>
+              </thead>
+              <tbody>
+                <tr id="crm-alex" data-address="123 Peachtree Rd, Atlanta, GA" data-notes="">
+                  <td contenteditable class="client-name">Alex Rivera</td>
+                  <td contenteditable>Zenith Group</td>
+                  <td contenteditable>alex@zenithgrp.com</td>
+                  <td contenteditable>(404) 555‑0101</td>
+                  <td data-stage><select class="input stage-select"><option selected>Lead</option><option>Discovery</option><option>Proposal</option><option>Negotiation</option><option>Won</option></select></td>
+                  <td contenteditable>Nate</td>
+                </tr>
+                <tr id="crm-priya" data-address="500 Midtown Ave, Atlanta, GA" data-notes="">
+                  <td contenteditable class="client-name">Priya Shah</td>
+                  <td contenteditable>Blue Sky Studio</td>
+                  <td contenteditable>priya@blueskystudio.io</td>
+                  <td contenteditable>(470) 555‑0199</td>
+                  <td data-stage><select class="input stage-select"><option>Lead</option><option>Discovery</option><option selected>Proposal</option><option>Negotiation</option><option>Won</option></select></td>
+                  <td contenteditable>Nate</td>
+                </tr>
+                <tr id="crm-acme" data-address="42 Industrial Way, Atlanta, GA" data-notes="">
+                  <td contenteditable class="client-name">Jordan Lee</td>
+                  <td contenteditable>Acme Co.</td>
+                  <td contenteditable>jordan@acmeco.com</td>
+                  <td contenteditable>(678) 555‑0147</td>
+                  <td data-stage><select class="input stage-select"><option>Lead</option><option>Discovery</option><option>Proposal</option><option>Negotiation</option><option selected>Won</option></select></td>
+                  <td contenteditable>Nate</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <h3>Add New Client</h3>
+            <div class="grid">
+              <input class="input" id="new-name" placeholder="Full name" />
+              <input class="input" id="new-company" placeholder="Company" />
+              <input class="input" id="new-email" placeholder="Email" />
+              <input class="input" id="new-phone" placeholder="Phone" />
+              <select id="new-stage" class="input">
+                <option>Lead</option><option>Discovery</option><option>Proposal</option><option>Negotiation</option><option>Won</option>
+              </select>
+              <input class="input" id="new-owner" placeholder="Owner" value="Nate" />
+              <div class="linkrow">
+                <button class="btn" id="add-client">Add Client</button>
+                <button class="btn secondary" id="save-crm">Save Changes (Local)</button>
+                <button class="btn link" data-nav="#page-cover">Back to Cover</button>
+              </div>
+            </div>
+            <p class="mini muted" style="margin-top:8px">Edits are inline. “Save Changes” stores a local copy in your browser for demo purposes.</p>
+          </div>
         </div>
-        <div class="card">
-          <h3>Add New Client</h3>
-          <div class="grid">
-            <input class="input" id="new-name" placeholder="Full name" />
-            <input class="input" id="new-company" placeholder="Company" />
-            <input class="input" id="new-email" placeholder="Email" />
-            <input class="input" id="new-phone" placeholder="Phone" />
-            <select id="new-stage" class="input">
-              <option>Lead</option><option>Discovery</option><option>Proposal</option><option>Negotiation</option><option>Won</option>
-            </select>
-            <input class="input" id="new-owner" placeholder="Owner" value="Nate" />
-            <div class="linkrow">
-              <button class="btn" id="add-client">Add Client</button>
-              <button class="btn secondary" id="save-crm">Save Changes (Local)</button>
-              <button class="btn link" data-nav="#page-cover">Back to Cover</button>
+      </div>
+      <div id="crm-companies" class="hidden">
+        <div class="grid grid-2 crm-grid">
+          <div class="card">
+            <h3>Companies <span class="pill">Editable</span></h3>
+            <input class="input" id="company-search" placeholder="Search companies" style="margin-bottom:8px" />
+            <table class="table" id="company-table">
+              <thead>
+                <tr><th>Company</th><th>Industry</th><th>Website</th><th>Stage</th><th>Owner</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td contenteditable>Zenith Group</td>
+                  <td contenteditable>Finance</td>
+                  <td contenteditable>zenithgrp.com</td>
+                  <td data-stage><select class="input stage-select"><option>Lead</option><option>Discovery</option><option selected>Proposal</option><option>Negotiation</option><option>Won</option></select></td>
+                  <td contenteditable>Nate</td>
+                </tr>
+                <tr>
+                  <td contenteditable>Blue Sky Studio</td>
+                  <td contenteditable>Design</td>
+                  <td contenteditable>blueskystudio.io</td>
+                  <td data-stage><select class="input stage-select"><option selected>Lead</option><option>Discovery</option><option>Proposal</option><option>Negotiation</option><option>Won</option></select></td>
+                  <td contenteditable>Nate</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <h3>Add New Company</h3>
+            <div class="grid">
+              <input class="input" id="new-comp-name" placeholder="Company name" />
+              <input class="input" id="new-comp-industry" placeholder="Industry" />
+              <input class="input" id="new-comp-website" placeholder="Website" />
+              <select id="new-comp-stage" class="input">
+                <option>Lead</option><option>Discovery</option><option>Proposal</option><option>Negotiation</option><option>Won</option>
+              </select>
+              <input class="input" id="new-comp-owner" placeholder="Owner" value="Nate" />
+              <div class="linkrow">
+                <button class="btn" id="add-company">Add Company</button>
+                <button class="btn secondary" id="save-companies">Save Changes (Local)</button>
+              </div>
             </div>
           </div>
-          <p class="mini muted" style="margin-top:8px">Edits are inline. “Save Changes” stores a local copy in your browser for demo purposes.</p>
         </div>
       </div>
       <div class="card" style="margin-top:16px">
@@ -277,6 +328,7 @@
       </div>
       <div class="card" style="margin-top:16px;text-align:center">
         <button class="btn" id="start-survey">🌱 Employee Wellness Survey</button>
+        <p class="mini" style="margin-top:8px"><a href="https://www.youtube.com/watch?v=qs1AxaQTLyE" target="_blank" rel="noopener">Try this office stretch</a></p>
       </div>
     </section>
 
@@ -425,54 +477,120 @@
     // On load
     showPage(location.hash || '#page-cover');
 
-    // CRM: Add + Save (localStorage)
-    const addBtn = document.getElementById('add-client');
-    const saveBtn = document.getElementById('save-crm');
-    const table = document.getElementById('client-table').querySelector('tbody');
-    const searchInput = document.getElementById('client-search');
+    // CRM tabs
+    document.querySelectorAll('.crm-tab').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.crm-tab').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('crm-clients').classList.toggle('hidden', btn.dataset.target!=='crm-clients');
+        document.getElementById('crm-companies').classList.toggle('hidden', btn.dataset.target!=='crm-companies');
+      });
+    });
+
+    const stageOptions = ['Lead','Discovery','Proposal','Negotiation','Won'];
+    function stageDropdown(val){
+      return `<select class="input stage-select">${stageOptions.map(o=>`<option ${o===val?'selected':''}>${o}</option>`).join('')}</select>`;
+    }
+
+    // Clients table
+    const addClientBtn = document.getElementById('add-client');
+    const saveClientBtn = document.getElementById('save-crm');
+    const clientTable = document.getElementById('client-table').querySelector('tbody');
+    const clientSearch = document.getElementById('client-search');
     function getVal(id){ return document.getElementById(id).value.trim(); }
-    if(addBtn){
-      addBtn.addEventListener('click', ()=>{
+    if(addClientBtn){
+      addClientBtn.addEventListener('click', ()=>{
         const name=getVal('new-name'); const comp=getVal('new-company'); const email=getVal('new-email'); const phone=getVal('new-phone'); const stage=getVal('new-stage'); const owner=getVal('new-owner');
         if(!name||!comp){ alert('Name and Company are required.'); return; }
         const tr=document.createElement('tr');
-        tr.innerHTML=`<td contenteditable>${name}</td><td contenteditable>${comp}</td><td contenteditable>${email}</td><td contenteditable>${phone}</td><td contenteditable data-stage>${stage}</td><td contenteditable>${owner}</td>`;
-        table.appendChild(tr);
+        tr.innerHTML=`<td contenteditable>${name}</td><td contenteditable>${comp}</td><td contenteditable>${email}</td><td contenteditable>${phone}</td><td data-stage>${stageDropdown(stage)}</td><td contenteditable>${owner}</td>`;
+        clientTable.appendChild(tr);
         ['new-name','new-company','new-email','new-phone','new-owner'].forEach(id=>document.getElementById(id).value='');
       });
     }
-    function serializeCRM(){
-      return [...table.querySelectorAll('tr')].map(tr=>[...tr.children].map(td=>td.textContent));
+    function serializeClients(){
+      return [...clientTable.querySelectorAll('tr')].map(tr=>[...tr.children].map(td=>{
+        const sel=td.querySelector('select');
+        return sel? sel.value : td.textContent;
+      }));
     }
-    if(searchInput){
-      searchInput.addEventListener('input', ()=>{
-        const q = searchInput.value.toLowerCase();
-        [...table.querySelectorAll('tr')].forEach(tr=>{
-          const match = [...tr.children].some(td=>td.textContent.toLowerCase().includes(q));
+    if(clientSearch){
+      clientSearch.addEventListener('input', ()=>{
+        const q = clientSearch.value.toLowerCase();
+        [...clientTable.querySelectorAll('tr')].forEach(tr=>{
+          const match = [...tr.children].some(td=>(td.textContent||td.querySelector('select')?.value||'').toLowerCase().includes(q));
           tr.style.display = match ? '' : 'none';
         });
       });
     }
-      if(saveBtn){
-        saveBtn.addEventListener('click', ()=>{
-          const data = serializeCRM();
-          localStorage.setItem('crm-demo', JSON.stringify(data));
-          alert('Saved locally for demo.');
-        });
-        // Load on init if present
-        const saved = localStorage.getItem('crm-demo');
-        if(saved){
-          try{
-            const rows = JSON.parse(saved);
-            table.innerHTML='';
-            rows.forEach(cols=>{
-              const tr=document.createElement('tr');
-              tr.innerHTML = cols.map((v,i)=>`<td contenteditable ${i===4? 'data-stage':''}>${v}</td>`).join('');
-              table.appendChild(tr);
-            })
-          }catch(err){ console.warn('Failed to parse saved CRM data', err); }
-        }
+    if(saveClientBtn){
+      saveClientBtn.addEventListener('click', ()=>{
+        const data = serializeClients();
+        localStorage.setItem('crm-demo', JSON.stringify(data));
+        alert('Saved locally for demo.');
+      });
+      const saved = localStorage.getItem('crm-demo');
+      if(saved){
+        try{
+          const rows = JSON.parse(saved);
+          clientTable.innerHTML='';
+          rows.forEach(cols=>{
+            const tr=document.createElement('tr');
+            tr.innerHTML = cols.map((v,i)=> i===4? `<td data-stage>${stageDropdown(v)}</td>` : `<td contenteditable>${v}</td>`).join('');
+            clientTable.appendChild(tr);
+          });
+        }catch(err){ console.warn('Failed to parse saved CRM data', err); }
       }
+    }
+
+    // Companies table
+    const addCompanyBtn = document.getElementById('add-company');
+    const saveCompaniesBtn = document.getElementById('save-companies');
+    const companyTable = document.getElementById('company-table').querySelector('tbody');
+    const companySearch = document.getElementById('company-search');
+    if(addCompanyBtn){
+      addCompanyBtn.addEventListener('click',()=>{
+        const name=getVal('new-comp-name'); const industry=getVal('new-comp-industry'); const site=getVal('new-comp-website'); const stage=getVal('new-comp-stage'); const owner=getVal('new-comp-owner');
+        if(!name){ alert('Company name required'); return; }
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td contenteditable>${name}</td><td contenteditable>${industry}</td><td contenteditable>${site}</td><td data-stage>${stageDropdown(stage)}</td><td contenteditable>${owner}</td>`;
+        companyTable.appendChild(tr);
+        ['new-comp-name','new-comp-industry','new-comp-website','new-comp-owner'].forEach(id=>document.getElementById(id).value='');
+      });
+    }
+    function serializeCompanies(){
+      return [...companyTable.querySelectorAll('tr')].map(tr=>[...tr.children].map(td=>{
+        const sel=td.querySelector('select');
+        return sel? sel.value : td.textContent;
+      }));
+    }
+    if(companySearch){
+      companySearch.addEventListener('input',()=>{
+        const q = companySearch.value.toLowerCase();
+        [...companyTable.querySelectorAll('tr')].forEach(tr=>{
+          const match = [...tr.children].some(td=>(td.textContent||td.querySelector('select')?.value||'').toLowerCase().includes(q));
+          tr.style.display = match ? '' : 'none';
+        });
+      });
+    }
+    if(saveCompaniesBtn){
+      saveCompaniesBtn.addEventListener('click',()=>{
+        localStorage.setItem('companies-demo', JSON.stringify(serializeCompanies()));
+        alert('Saved locally for demo.');
+      });
+      const savedCompanies = localStorage.getItem('companies-demo');
+      if(savedCompanies){
+        try{
+          const rows = JSON.parse(savedCompanies);
+          companyTable.innerHTML='';
+          rows.forEach(cols=>{
+            const tr=document.createElement('tr');
+            tr.innerHTML = cols.map((v,i)=> i===3? `<td data-stage>${stageDropdown(v)}</td>` : `<td contenteditable>${v}</td>`).join('');
+            companyTable.appendChild(tr);
+          });
+        }catch(err){ console.warn('Failed to parse saved companies data', err); }
+      }
+    }
 
       // CRM detail modal
       const clientModal = document.getElementById('client-modal');
@@ -487,7 +605,7 @@
       const clientNotes = document.getElementById('client-notes');
       const clientMap = document.getElementById('client-map');
       let currentClientRow = null;
-      table.addEventListener('click', e=>{
+      clientTable.addEventListener('click', e=>{
         const nameCell = e.target.closest('.client-name');
         if(!nameCell) return;
         currentClientRow = nameCell.parentElement;
@@ -496,7 +614,7 @@
         clientCompany.textContent = cells[1].textContent.trim();
         clientEmail.textContent = cells[2].textContent.trim();
         clientPhone.textContent = cells[3].textContent.trim();
-        clientStage.textContent = cells[4].textContent.trim();
+        clientStage.textContent = cells[4].querySelector('select').value;
         clientOwner.textContent = cells[5].textContent.trim();
         clientAddress.textContent = currentClientRow.dataset.address || '';
         clientNotes.value = currentClientRow.dataset.notes || '';
@@ -938,7 +1056,7 @@
         const match = title.match(/(?:Call|Email):\s*([^()]+)/i);
         if(match){
           const name = match[1].trim().toLowerCase();
-          const row = [...table.querySelectorAll('tr')].find(r=>r.children[0].textContent.trim().toLowerCase()===name);
+          const row = [...clientTable.querySelectorAll('tr')].find(r=>r.children[0].textContent.trim().toLowerCase()===name);
           if(row){ return {name: row.children[0].textContent.trim(), id: row.id}; }
         }
         return null;
