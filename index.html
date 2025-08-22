@@ -496,6 +496,20 @@
       return `<select class="input stage-select">${stageOptions.map(o=>`<option ${o===val?'selected':''}>${o}</option>`).join('')}</select>`;
     }
 
+    const pipelineBoard = document.getElementById('pipeline');
+    function addToPipeline(name, company, stage){
+      if(!pipelineBoard) return;
+      const col=[...pipelineBoard.querySelectorAll('.column')].find(c=>c.dataset.stage===stage);
+      if(col){
+        const div=document.createElement('div');
+        div.className='task';
+        div.textContent=`${name} – ${company}`;
+        div.draggable=true;
+        div.addEventListener('dragstart',()=> draggedPerson=div);
+        col.appendChild(div);
+      }
+    }
+
     // Clients table
     const addClientBtn = document.getElementById('add-client');
     const saveClientBtn = document.getElementById('save-crm');
@@ -509,6 +523,7 @@
         const tr=document.createElement('tr');
         tr.innerHTML=`<td contenteditable>${name}</td><td contenteditable>${comp}</td><td contenteditable>${email}</td><td contenteditable>${phone}</td><td data-stage>${stageDropdown(stage)}</td><td contenteditable>${owner}</td>`;
         clientTable.appendChild(tr);
+        addToPipeline(name, comp, stage);
         ['new-name','new-company','new-email','new-phone','new-owner'].forEach(id=>document.getElementById(id).value='');
       });
     }
@@ -884,9 +899,9 @@
       if(saved){ try{ upcoming = JSON.parse(saved); }catch{ upcoming=[]; } }
       if(!upcoming.length){
         upcoming = [
-          {title:'Client Call – Acme Co.', time:'Sep 2, 10:00'},
-          {title:'Proposal Review – Blue Sky', time:'Sep 3, 14:00'},
-          {title:'Onboarding Session', time:'Sep 5, 09:00'}
+          {title:'Client Call – Acme Co.', time:'2024-09-02T10:00'},
+          {title:'Proposal Review – Blue Sky', time:'2024-09-03T14:00'},
+          {title:'Onboarding Session', time:'2024-09-05T09:00'}
         ];
       }
     }
@@ -898,7 +913,7 @@
         const div=document.createElement('div');
         div.className='task';
         div.dataset.index=i;
-        div.innerHTML=`<div contenteditable class="task-title">${u.title}</div><div class="mini" contenteditable>${u.time}</div><button class="btn link remove-upcoming">Remove</button>`;
+        div.innerHTML=`<div contenteditable class="task-title">${u.title}</div><input type="datetime-local" class="up-time" value="${u.time}" style="flex:1"/><button class="btn link remove-upcoming">Remove</button>`;
         upcomingList.appendChild(div);
       });
     }
@@ -908,8 +923,7 @@
         const title=document.getElementById('upcoming-title').value.trim();
         const date=document.getElementById('upcoming-date').value;
         if(!title) return;
-        const time=date? new Date(date).toLocaleString():'';
-        upcoming.push({title,time});
+        upcoming.push({title,time:date});
         saveUpcoming(); renderUpcoming();
         document.getElementById('upcoming-title').value='';
         document.getElementById('upcoming-date').value='';
@@ -927,9 +941,17 @@
         if(!item) return;
         const idx=Number(item.dataset.index);
         upcoming[idx].title=item.querySelector('.task-title').textContent.trim();
-        upcoming[idx].time=item.querySelector('.mini').textContent.trim();
         saveUpcoming();
       },true);
+      upcomingList.addEventListener('change',e=>{
+        const item=e.target.closest('.task');
+        if(!item) return;
+        const idx=Number(item.dataset.index);
+        if(e.target.classList.contains('up-time')){
+          upcoming[idx].time=e.target.value;
+          saveUpcoming();
+        }
+      });
     }
       loadUpcoming(); renderUpcoming();
 
@@ -947,6 +969,16 @@
           pts.push(`${x},${y}`);
           const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
           c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',4);
+          const d=new Date();
+          d.setDate(d.getDate()-(moodData.length-1-i));
+          const label=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+          c.addEventListener('mousemove',e=>{
+            tooltip.style.display='block';
+            tooltip.textContent=`${label}: ${v}`;
+            tooltip.style.left=(e.clientX+10)+'px';
+            tooltip.style.top=(e.clientY+10)+'px';
+          });
+          c.addEventListener('mouseleave',()=>tooltip.style.display='none');
           moodDots.appendChild(c);
         });
         moodLine.setAttribute('points', pts.join(' '));
@@ -1102,38 +1134,51 @@
         });
       }
       if(modalClose){ modalClose.addEventListener('click',()=>{ const key = taskModal.dataset.key; if(key){ taskNotes[key]=modalNote.value.trim(); localStorage.setItem('task-notes', JSON.stringify(taskNotes)); } taskModal.classList.add('hidden'); }); }
+    function openTaskDetails(taskEl){
+      let title='', due='';
+      if(taskEl.dataset.id){
+        const t = tasks.find(x=>x.id===Number(taskEl.dataset.id));
+        if(t){ title=t.title; due=t.due||''; }
+      }else if(taskEl.closest('#upcoming-list')){
+        title = taskEl.querySelector('.task-title').textContent.trim();
+        due = taskEl.querySelector('.up-time')?.value || '';
+      }else if(taskEl.closest('#page-daily')){
+        title = taskEl.querySelector('.task-title')?taskEl.querySelector('.task-title').textContent.trim():taskEl.textContent.trim();
+        due = taskEl.querySelector('.task-due')?.textContent.trim() || '';
+      }else if(taskEl.closest('#pipeline')){
+        title = taskEl.textContent.trim();
+        due = taskEl.parentElement.dataset.stage || '';
+      }
+      if(title){
+        modalTitle.textContent=title;
+        modalDue.textContent=due;
+        modalNote.value = taskNotes[title] || '';
+        const contact = findCRMContactFromTitle(title);
+        if(contact){
+          modalContact.innerHTML = `<a href="#page-crm" class="crm-link" data-target="${contact.id}">View contact: ${contact.name}</a>`;
+        }else{
+          modalContact.textContent='';
+        }
+        taskModal.dataset.key = title;
+        taskModal.classList.remove('hidden');
+      }
+    }
+
+    const dailyListEl = document.getElementById('daily-list');
+    if(dailyListEl){
+      dailyListEl.addEventListener('click',e=>{
+        if(e.target.closest('.checkbox')||e.target.tagName==='A') return;
+        const taskEl = e.target.closest('.task');
+        if(taskEl) openTaskDetails(taskEl);
+      });
+    }
+
     document.addEventListener('click', e=>{
-      if(e.target.closest('.checkbox')||e.target.closest('.remove-upcoming')||e.target.hasAttribute('contenteditable')||e.target.closest('[contenteditable]')||e.target.tagName==='A') return;
+      if(e.target.closest('#daily-list')||e.target.closest('.checkbox')||e.target.closest('.remove-upcoming')||e.target.hasAttribute('contenteditable')||e.target.closest('[contenteditable]')||e.target.tagName==='A') return;
       const taskEl = e.target.closest('.task');
       if(!taskEl || taskEl.closest('#task-modal')) return;
-      let title='', due='';
-        if(taskEl.dataset.id){
-          const t = tasks.find(x=>x.id===Number(taskEl.dataset.id));
-          if(t){ title=t.title; due=t.due||''; }
-        }else if(taskEl.closest('#upcoming-list')){
-          title = taskEl.querySelector('.task-title').textContent.trim();
-          due = taskEl.querySelector('.mini').textContent.trim();
-        }else if(taskEl.closest('#page-daily')){
-          title = taskEl.querySelector('.task-title')?taskEl.querySelector('.task-title').textContent.trim():taskEl.textContent.trim();
-          due = taskEl.querySelector('.task-due')?.textContent.trim() || '';
-        }else if(taskEl.closest('#pipeline')){
-          title = taskEl.textContent.trim();
-          due = taskEl.parentElement.dataset.stage || '';
-        }
-        if(title){
-          modalTitle.textContent=title;
-          modalDue.textContent=due;
-          modalNote.value = taskNotes[title] || '';
-          const contact = findCRMContactFromTitle(title);
-          if(contact){
-            modalContact.innerHTML = `<a href="#page-crm" class="crm-link" data-target="${contact.id}">View contact: ${contact.name}</a>`;
-          }else{
-            modalContact.textContent='';
-          }
-          taskModal.dataset.key = title;
-          taskModal.classList.remove('hidden');
-        }
-      });
+      openTaskDetails(taskEl);
+    });
 
       document.querySelectorAll('.prompt').forEach(p=>{
         const txt = p.textContent.replace(/[“”]/g,'').trim();
