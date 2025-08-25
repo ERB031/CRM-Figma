@@ -162,6 +162,20 @@
           </div>
         </div>
       </div>
+      <div class="grid grid-2" style="margin-top:16px">
+        <div class="card kpi">
+          <h3>Revenue Generated</h3>
+          <p id="kpi-revenue">$0</p>
+        </div>
+        <div class="card kpi">
+          <h3>Time Saved</h3>
+          <p id="kpi-time">0h</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3>Today's Tasks</h3>
+        <ul id="today-task-list"></ul>
+      </div>
     </section>
 
     <!-- CRM SNAPSHOT -->
@@ -781,6 +795,16 @@
       tasks = tasks.map(t=>({...t,checked:!!t.checked}));
     }
     function saveTasks(){ localStorage.setItem('kanban-tasks', JSON.stringify(tasks)); }
+    function updateDashboardTasks(){
+      const list=document.getElementById('today-task-list');
+      if(!list) return;
+      list.innerHTML='';
+      tasks.filter(t=>t.status!=='done').forEach(t=>{
+        const li=document.createElement('li');
+        li.textContent=t.title;
+        list.appendChild(li);
+      });
+    }
     function renderTasks(){
       Object.values(taskColumns).forEach(col=>col.innerHTML='');
       tasks.forEach(t=>{
@@ -795,6 +819,7 @@
       });
       updateInsights();
       renderWorkflow();
+      updateDashboardTasks();
     }
     function addTask(status,title,due){
       const id = Date.now();
